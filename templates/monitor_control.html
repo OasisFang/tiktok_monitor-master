@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监控管理控制台 - TikTok监控系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .monitor-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        .monitor-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .status-active {
+            border-left: 4px solid #28a745;
+        }
+        .status-paused {
+            border-left: 4px solid #ffc107;
+        }
+        .status-stopped {
+            border-left: 4px solid #dc3545;
+        }
+        .status-offline {
+            border-left: 4px solid #6c757d;
+        }
+        .control-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .performance-meter {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .performance-bar {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .performance-good { background: #28a745; }
+        .performance-warning { background: #ffc107; }
+        .performance-danger { background: #dc3545; }
+        .quick-actions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="#">
+                            <i class="fas fa-video"></i> TikTok监控控制台
+                        </a>
+                        <div class="navbar-nav ms-auto">
+                            <a class="nav-link" href="/"><i class="fas fa-home"></i> 主页</a>
+                            <a class="nav-link" href="/history"><i class="fas fa-chart-line"></i> 历史数据</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- 全局控制面板 -->
+                <div class="control-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> 全局监控设置</h3>
+                            <div class="mb-3">
+                                <label class="form-label">监控间隔 (秒)</label>
+                                <input type="range" class="form-range" id="globalInterval" min="1" max="500" value="30" oninput="updateIntervalDisplay()">
+                                <div class="d-flex justify-content-between">
+                                    <small>1秒</small>
+                                    <span id="intervalDisplay" class="fw-bold">30秒</span>
+                                    <small>500秒</small>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">最大并发连接</label>
+                                <input type="range" class="form-range" id="maxConcurrent" min="1" max="30" value="5" oninput="updateConcurrentDisplay()">
+                                <div class="d-flex justify-content-between">
+                                    <small>1个</small>
+                                    <span id="concurrentDisplay" class="fw-bold">5个</span>
+                                    <small>30个</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-tachometer-alt"></i> 系统性能</h3>
+                            <div class="mb-2">
+                                <small>活跃监控: <span id="activeCount">0</span> / 总监控: <span id="totalCount">0</span></small>
+                                <div class="performance-meter">
+                                    <div id="performanceBar" class="performance-bar performance-good" style="width: 30%;"></div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <small>API请求频率: <span id="apiFrequency">0</span> 次/分钟</small>
+                            </div>
+                            <div class="mb-2">
+                                <small>平均响应时间: <span id="avgResponseTime">0</span> ms</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="quick-actions">
+                    <h5><i class="fas fa-bolt"></i> 快速操作</h5>
+                    <div class="btn-group me-2" role="group">
+                        <button class="btn btn-success" onclick="resumeAll()">
+                            <i class="fas fa-play"></i> 全部启动
+                        </button>
+                        <button class="btn btn-warning" onclick="pauseAll()">
+                            <i class="fas fa-pause"></i> 全部暂停
+                        </button>
+                        <button class="btn btn-danger" onclick="stopAll()">
+                            <i class="fas fa-stop"></i> 全部停止
+                        </button>
+                    </div>
+                    <div class="btn-group me-2" role="group">
+                        <button class="btn btn-info" onclick="testMode()">
+                            <i class="fas fa-flask"></i> 测试模式
+                        </button>
+                        <button class="btn btn-secondary" onclick="normalMode()">
+                            <i class="fas fa-shield-alt"></i> 稳定模式
+                        </button>
+                    </div>
+                    <button class="btn btn-primary" onclick="applyGlobalSettings()">
+                        <i class="fas fa-check"></i> 应用全局设置
+                    </button>
+                </div>
+
+                <!-- 监控列表 -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4><i class="fas fa-list"></i> 监控账号管理 <button class="btn btn-sm btn-outline-primary" onclick="refreshMonitorList()"><i class="fas fa-refresh"></i> 刷新</button></h4>
+                        <div id="monitorList">
+                            <!-- 监控项将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 添加新监控 -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-plus"></i> 添加新监控</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="newUniqueId" placeholder="TikTok用户名">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="newSessionId" placeholder="SessionID (可选)">
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="newAntiDetection">
+                                    <label class="form-check-label" for="newAntiDetection">防检测</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" id="newInterval">
+                                    <option value="15">15秒</option>
+                                    <option value="30" selected>30秒</option>
+                                    <option value="60">60秒</option>
+                                    <option value="120">120秒</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100" onclick="addMonitor()">
+                                    <i class="fas fa-plus"></i> 添加
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                <strong class="me-auto">系统通知</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastBody">
+                操作完成
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let monitors = [];
+        let performanceData = {
+            apiRequests: 0,
+            responseTime: 0
+        };
+
+        // 更新间隔显示
+        function updateIntervalDisplay() {
+            const interval = document.getElementById('globalInterval').value;
+            document.getElementById('intervalDisplay').textContent = interval + '秒';
+            updatePerformanceBar();
+        }
+
+        // 更新并发连接显示
+        function updateConcurrentDisplay() {
+            const concurrent = document.getElementById('maxConcurrent').value;
+            document.getElementById('concurrentDisplay').textContent = concurrent + '个';
+            updatePerformanceBar();
+        }
+
+        // 格式化最后更新时间
+        function formatLastUpdate(lastUpdate) {
+            if (!lastUpdate) return '未知';
+            
+            try {
+                const updateTime = new Date(lastUpdate);
+                const now = new Date();
+                const diffMinutes = Math.floor((now - updateTime) / (1000 * 60));
+                
+                if (diffMinutes < 1) return '刚刚';
+                if (diffMinutes < 60) return `${diffMinutes}分钟前`;
+                
+                const diffHours = Math.floor(diffMinutes / 60);
+                if (diffHours < 24) return `${diffHours}小时前`;
+                
+                return updateTime.toLocaleDateString() + ' ' + updateTime.toLocaleTimeString();
+            } catch (e) {
+                return '格式错误';
+            }
+        }
+
+        // 更新性能条
+        function updatePerformanceBar() {
+            const activeCount = monitors.filter(m => m.status === 'active').length;
+            const interval = parseInt(document.getElementById('globalInterval').value);
+            const maxConcurrent = parseInt(document.getElementById('maxConcurrent').value);
+            
+            document.getElementById('activeCount').textContent = activeCount;
+            document.getElementById('totalCount').textContent = monitors.length;
+            
+            // 计算负载百分比（活跃监控数 / 最大并发数）
+            const loadPercentage = maxConcurrent > 0 ? (activeCount / maxConcurrent) * 100 : 0;
+            const apiFrequency = Math.round((activeCount * 60) / interval);
+            const avgResponseTime = 150 + Math.min(activeCount * 30, 500); // 基础150ms + 负载延迟
+            
+            document.getElementById('apiFrequency').textContent = apiFrequency;
+            document.getElementById('avgResponseTime').textContent = avgResponseTime;
+            document.getElementById('performanceBar').style.width = Math.min(loadPercentage, 100) + '%';
+            
+            // 修正性能颜色逻辑（负载越高颜色越红）
+            const bar = document.getElementById('performanceBar');
+            bar.className = 'performance-bar ';
+            if (loadPercentage <= 50) {
+                bar.className += 'performance-good';     // 低负载：绿色
+            } else if (loadPercentage <= 80) {
+                bar.className += 'performance-warning';  // 中负载：黄色
+            } else {
+                bar.className += 'performance-danger';   // 高负载：红色
+            }
+        }
+
+        // 加载监控列表
+        async function loadMonitorList() {
+            try {
+                const response = await fetch('/api/monitor/list_detailed');
+                const data = await response.json();
+                monitors = data.monitors || [];
+                renderMonitorList();
+                updatePerformanceBar();
+                
+                // 更新所有刷新时间
+                monitors.forEach(monitor => {
+                    const refreshElement = document.getElementById(`refreshTime_${monitor.unique_id}`);
+                    if (refreshElement) {
+                        refreshElement.textContent = '刚刚';
+                        refreshElement.setAttribute('data-refresh-time', Date.now().toString());
+                    }
+                });
+            } catch (error) {
+                showToast('加载监控列表失败: ' + error.message, 'error');
+            }
+        }
+
+        // 渲染监控列表
+        function renderMonitorList() {
+            const container = document.getElementById('monitorList');
+            
+            if (monitors.length === 0) {
+                container.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle"></i> 暂无监控账号</div>';
+                return;
+            }
+
+            // 按当前在线人数排序（降序）
+            const sortedMonitors = [...monitors].sort((a, b) => (b.current_viewers || 0) - (a.current_viewers || 0));
+
+            const html = sortedMonitors.map(monitor => `
+                <div class="monitor-card ${getStatusClass(monitor.status)}" data-unique-id="${monitor.unique_id}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <h6 class="mb-1">@${monitor.unique_id}</h6>
+                                <small class="text-muted">${getStatusText(monitor.status)}</small>
+                            </div>
+                            <div class="col-md-2">
+                                <small>观众: <strong>${monitor.current_viewers || 0}</strong></small><br>
+                                <small>累计: ${monitor.total_viewers || 0}</small><br>
+                                <small class="${monitor.is_live ? 'text-success' : 'text-muted'}">
+                                    ${monitor.is_live ? '🔴 直播中' : '⚫ 离线'}
+                                </small><br>
+                                <small class="${monitor.connected ? 'text-success' : 'text-warning'}">
+                                    ${monitor.connected ? '🔗 已连接' : '❌ 未连接'}
+                                </small>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">间隔 (${monitor.interval}秒)</label>
+                                <input type="range" class="form-range" min="1" max="500" value="${monitor.interval}" 
+                                       onchange="updateMonitorInterval('${monitor.unique_id}', this.value)" 
+                                       oninput="this.previousElementSibling.textContent = '间隔 (' + this.value + '秒)'">
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" ${monitor.anti_detection ? 'checked' : ''} 
+                                           onchange="updateAntiDetection('${monitor.unique_id}', this.checked)">
+                                    <label class="form-check-label">防检测</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <small>数据更新:</small><br>
+                                <small class="text-muted" id="lastUpdate_${monitor.unique_id}">
+                                    ${formatLastUpdate(monitor.last_update)}
+                                </small><br>
+                                <small class="text-info">
+                                    界面刷新: <span id="refreshTime_${monitor.unique_id}">刚刚</span>
+                                </small>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="btn-group-vertical d-grid gap-1">
+                                    ${monitor.status === 'active' ? 
+                                        `<button class="btn btn-warning btn-sm" onclick="pauseMonitor('${monitor.unique_id}')">
+                                            <i class="fas fa-pause"></i> 暂停
+                                        </button>` :
+                                        `<button class="btn btn-success btn-sm" onclick="resumeMonitor('${monitor.unique_id}')">
+                                            <i class="fas fa-play"></i> 启动
+                                        </button>`
+                                    }
+                                    <button class="btn btn-danger btn-sm" onclick="stopMonitor('${monitor.unique_id}')">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        // 获取状态样式类
+        function getStatusClass(status) {
+            switch(status) {
+                case 'active': return 'status-active';
+                case 'paused': return 'status-paused';
+                case 'stopped': return 'status-stopped';
+                default: return 'status-offline';
+            }
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            switch(status) {
+                case 'active': return '运行中';
+                case 'paused': return '已暂停';
+                case 'stopped': return '已停止';
+                default: return '离线';
+            }
+        }
+
+        // 暂停监控
+        async function pauseMonitor(uniqueId) {
+            try {
+                const response = await fetch('/api/monitor/pause', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({unique_id: uniqueId})
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast(`已暂停监控 @${uniqueId}`);
+                    loadMonitorList();
+                } else {
+                    showToast(data.error, 'error');
+                }
+            } catch (error) {
+                showToast('暂停失败: ' + error.message, 'error');
+            }
+        }
+
+        // 恢复监控
+        async function resumeMonitor(uniqueId) {
+            try {
+                const response = await fetch('/api/monitor/resume', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({unique_id: uniqueId})
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast(`已恢复监控 @${uniqueId}`);
+                    loadMonitorList();
+                } else {
+                    showToast(data.error, 'error');
+                }
+            } catch (error) {
+                showToast('恢复失败: ' + error.message, 'error');
+            }
+        }
+
+        // 停止监控
+        async function stopMonitor(uniqueId) {
+            if (!confirm(`确定要删除监控 @${uniqueId} 吗？`)) return;
+            
+            try {
+                const response = await fetch('/stop_monitor', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({unique_id: uniqueId})
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast(`已删除监控 @${uniqueId}`);
+                    loadMonitorList();
+                } else {
+                    showToast(data.error, 'error');
+                }
+            } catch (error) {
+                showToast('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        // 更新监控间隔
+        async function updateMonitorInterval(uniqueId, interval) {
+            try {
+                const response = await fetch('/api/monitor/update_interval', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({unique_id: uniqueId, interval: parseInt(interval)})
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast(`已更新 @${uniqueId} 的监控间隔为 ${interval}秒`);
+                } else {
+                    showToast(data.error, 'error');
+                }
+            } catch (error) {
+                showToast('更新失败: ' + error.message, 'error');
+            }
+        }
+
+        // 更新防检测设置
+        async function updateAntiDetection(uniqueId, enabled) {
+            try {
+                const response = await fetch('/api/monitor/update_anti_detection', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({unique_id: uniqueId, anti_detection: enabled})
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast(`已${enabled ? '启用' : '禁用'} @${uniqueId} 的防检测模式`);
+                } else {
+                    showToast(data.error, 'error');
+                }
+            } catch (error) {
+                showToast('更新失败: ' + error.message, 'error');
+            }
+        }
+
+        // 全部暂停
+        async function pauseAll() {
+            if (!confirm('确定要暂停所有监控吗？')) return;
+            
+            try {
+                const response = await fetch('/api/monitor/pause_all', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const data = await response.json();
+                showToast(data.message);
+                loadMonitorList();
+            } catch (error) {
+                showToast('操作失败: ' + error.message, 'error');
+            }
+        }
+
+        // 全部恢复
+        async function resumeAll() {
+            try {
+                const response = await fetch('/api/monitor/resume_all', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const data = await response.json();
+                showToast(data.message);
+                loadMonitorList();
+            } catch (error) {
+                showToast('操作失败: ' + error.message, 'error');
+            }
+        }
+
+        // 全部停止
+        async function stopAll() {
+            if (!confirm('确定要删除所有监控吗？这将清除所有配置！')) return;
+            
+            try {
+                const response = await fetch('/stop_all', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                const data = await response.json();
+                showToast(data.message);
+                loadMonitorList();
+            } catch (error) {
+                showToast('操作失败: ' + error.message, 'error');
+            }
+        }
+
+        // 测试模式
+        function testMode() {
+            document.getElementById('globalInterval').value = 5;
+            document.getElementById('maxConcurrent').value = 10;
+            updateIntervalDisplay();
+            updateConcurrentDisplay();
+            showToast('已切换到测试模式 (5秒间隔, 10个并发)', 'warning');
+        }
+
+        // 稳定模式
+        function normalMode() {
+            document.getElementById('globalInterval').value = 30;
+            document.getElementById('maxConcurrent').value = 5;
+            updateIntervalDisplay();
+            updateConcurrentDisplay();
+            showToast('已切换到稳定模式 (30秒间隔, 5个并发)');
+        }
+
+        // 应用全局设置
+        async function applyGlobalSettings() {
+            const interval = parseInt(document.getElementById('globalInterval').value);
+            const maxConcurrent = parseInt(document.getElementById('maxConcurrent').value);
+            
+            try {
+                const response = await fetch('/api/monitor/global_settings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        global_interval: interval,
+                        max_concurrent: maxConcurrent
+                    })
+                });
+                const data = await response.json();
+                showToast(data.message);
+            } catch (error) {
+                showToast('应用设置失败: ' + error.message, 'error');
+            }
+        }
+
+        // 添加新监控
+        async function addMonitor() {
+            const uniqueId = document.getElementById('newUniqueId').value.trim();
+            const sessionId = document.getElementById('newSessionId').value.trim();
+            const antiDetection = document.getElementById('newAntiDetection').checked;
+            const interval = parseInt(document.getElementById('newInterval').value);
+            
+            if (!uniqueId) {
+                showToast('请输入TikTok用户名', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/start_monitor', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        unique_id: uniqueId,
+                        sessionid: sessionId || null,
+                        anti_detection: antiDetection,
+                        custom_interval: interval
+                    })
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast(`已添加监控 @${uniqueId}`);
+                    // 清空表单
+                    document.getElementById('newUniqueId').value = '';
+                    document.getElementById('newSessionId').value = '';
+                    document.getElementById('newAntiDetection').checked = false;
+                    document.getElementById('newInterval').value = '30';
+                    loadMonitorList();
+                } else {
+                    showToast(data.error, 'error');
+                }
+            } catch (error) {
+                showToast('添加失败: ' + error.message, 'error');
+            }
+        }
+
+        // 刷新列表
+        function refreshMonitorList() {
+            loadMonitorList();
+            showToast('列表已刷新');
+        }
+
+        // 显示Toast通知
+        function showToast(message, type = 'info') {
+            const toastBody = document.getElementById('toastBody');
+            const toast = new bootstrap.Toast(document.getElementById('toast'));
+            
+            toastBody.textContent = message;
+            
+            // 根据类型改变样式
+            const toastElement = document.getElementById('toast');
+            toastElement.className = 'toast';
+            if (type === 'error') {
+                toastElement.classList.add('text-bg-danger');
+            } else if (type === 'warning') {
+                toastElement.classList.add('text-bg-warning');
+            } else {
+                toastElement.classList.add('text-bg-primary');
+            }
+            
+            toast.show();
+        }
+
+        // 加载当前全局设置
+        async function loadGlobalSettings() {
+            try {
+                const response = await fetch('/api/monitor/global_settings');
+                const data = await response.json();
+                if (data.status === 'success') {
+                    const settings = data.settings;
+                    document.getElementById('globalInterval').value = settings.update_interval_base;
+                    document.getElementById('maxConcurrent').value = settings.max_concurrent_connections;
+                    updateIntervalDisplay();
+                    updateConcurrentDisplay();
+                }
+            } catch (error) {
+                console.error('加载全局设置失败:', error);
+                // 如果失败，使用默认值
+                document.getElementById('globalInterval').value = 30;
+                document.getElementById('maxConcurrent').value = 5;
+                updateIntervalDisplay();
+                updateConcurrentDisplay();
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGlobalSettings(); // 先加载当前设置
+            loadMonitorList();
+            updateIntervalDisplay();
+            updateConcurrentDisplay();
+            
+            // 定期刷新数据
+            setInterval(() => {
+                loadMonitorList();
+                
+                // 更新相对时间显示
+                monitors.forEach(monitor => {
+                    const refreshElement = document.getElementById(`refreshTime_${monitor.unique_id}`);
+                    const lastUpdateElement = document.getElementById(`lastUpdate_${monitor.unique_id}`);
+                    
+                    if (refreshElement && lastUpdateElement) {
+                        // 更新刷新时间为相对时间
+                        const refreshTime = refreshElement.getAttribute('data-refresh-time');
+                        if (refreshTime) {
+                            const timeDiff = Math.floor((Date.now() - parseInt(refreshTime)) / 1000);
+                            if (timeDiff < 60) {
+                                refreshElement.textContent = timeDiff + '秒前';
+                            } else {
+                                refreshElement.textContent = Math.floor(timeDiff / 60) + '分钟前';
+                            }
+                        }
+                        
+                        // 更新最后更新时间
+                        lastUpdateElement.textContent = formatLastUpdate(monitor.last_update);
+                    }
+                });
+            }, 10000); // 每10秒刷新一次
+            
+            // 每秒更新刷新时间显示
+            setInterval(() => {
+                monitors.forEach(monitor => {
+                    const refreshElement = document.getElementById(`refreshTime_${monitor.unique_id}`);
+                    if (refreshElement) {
+                        const refreshTime = refreshElement.getAttribute('data-refresh-time');
+                        if (refreshTime) {
+                            const timeDiff = Math.floor((Date.now() - parseInt(refreshTime)) / 1000);
+                            if (timeDiff < 60) {
+                                refreshElement.textContent = timeDiff + '秒前';
+                            } else {
+                                refreshElement.textContent = Math.floor(timeDiff / 60) + '分钟前';
+                            }
+                        }
+                    }
+                });
+            }, 1000); // 每秒更新一次
+        });
+    </script>
+</body>
+</html>

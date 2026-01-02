@@ -1,0 +1,73 @@
+{
+  "unique_id": "diynana_anya",
+  "room_id": 7513894259494292225,
+  "title": "Anya diy 天然石大サービス‼️",
+  "stream_status": 2,
+  "create_time": 1749464851,
+  "start_time": "2025-06-09T23:50:11.757438",
+  "end_time": "2025-06-09T23:50:19.864754",
+  "duration": 8.107316,
+  "peak_viewers": 57,
+  "total_viewers": 2571,
+  "like_count": 60,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T23:50:04.128050",
+      "minute": "23:50",
+      "current_viewers": 58,
+      "total_viewers": 2570,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "ゆみこ🩷アーニャちゃん推し🩷ヘイヘイホー🩷",
+      "comment": "りーちゃん💕ヤフヤフ〜😁",
+      "timestamp": "2025-06-09T23:50:11.763455"
+    },
+    {
+      "user": "ゆみこ🩷アーニャちゃん推し🩷ヘイヘイホー🩷",
+      "comment": "久しぶりに、りーちゃんの声聞けた🫶",
+      "timestamp": "2025-06-09T23:50:11.769524"
+    },
+    {
+      "user": "M",
+      "comment": "初めまして(⋆ᴗ͈ˬᴗ͈)”今後ブブちゃんのイロチは販売ありますか？",
+      "timestamp": "2025-06-09T23:50:11.775178"
+    },
+    {
+      "user": "M",
+      "comment": "分かりました♡ありがとうございます( *´꒳`*)",
+      "timestamp": "2025-06-09T23:50:11.780499"
+    },
+    {
+      "user": "ただの主婦",
+      "comment": "手書きビーズ×ラブブのやつとかほしーな🥺🥺",
+      "timestamp": "2025-06-09T23:50:11.787412"
+    },
+    {
+      "user": "ちづ",
+      "comment": "ダイエット中なのに我慢できずアイス食べちゃった😱",
+      "timestamp": "2025-06-09T23:50:11.788298"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

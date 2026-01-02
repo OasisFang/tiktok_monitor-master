@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史数据分析 - TikTok直播监控</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .trend-up { color: #28a745; }
+        .trend-down { color: #dc3545; }
+        .trend-stable { color: #6c757d; }
+        .user-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .analytics-section {
+            display: none;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">TikTok直播数据监控</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home"></i> 实时监控
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/history">
+                            <i class="fas fa-chart-line"></i> 历史数据分析
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- 用户选择和时间范围 -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-user"></i> 选择用户</h5>
+                    </div>
+                    <div class="card-body">
+                        <select id="userSelect" class="form-select">
+                            <option value="">选择要分析的用户...</option>
+                        </select>
+                        <div class="mt-3">
+                            <label for="dayRange" class="form-label">分析天数</label>
+                            <select id="dayRange" class="form-select">
+                                <option value="7">最近 7 天</option>
+                                <option value="30" selected>最近 30 天</option>
+                                <option value="90">最近 90 天</option>
+                            </select>
+                        </div>
+                        <button id="loadAnalytics" class="btn btn-primary mt-3 w-100">
+                            <i class="fas fa-search"></i> 加载分析数据
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-download"></i> 数据导出</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="exportUser" class="form-label">用户 (留空导出所有)</label>
+                            <select id="exportUser" class="form-select">
+                                <option value="">所有用户</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">开始日期</label>
+                                <input type="date" id="startDate" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">结束日期</label>
+                                <input type="date" id="endDate" class="form-control">
+                            </div>
+                        </div>
+                        <button id="exportData" class="btn btn-success mt-3 w-100">
+                            <i class="fas fa-file-excel"></i> 导出 CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分析结果区域 -->
+        <div id="analyticsSection" class="analytics-section">
+            <!-- 统计概览 -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="stat-number" id="totalSessions">-</div>
+                            <div class="stat-label">总直播场次</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="stat-number" id="avgDuration">-</div>
+                            <div class="stat-label">平均时长 (分钟)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="stat-number" id="peakViewers">-</div>
+                            <div class="stat-label">最高观众数</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="stat-number" id="totalLikes">-</div>
+                            <div class="stat-label">总点赞数</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 趋势分析 -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-area"></i> 观众数趋势</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-clock"></i> 最佳直播时间</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="display-4 text-primary" id="bestTime">-</div>
+                            <p class="text-muted">观众数最高的时间段</p>
+                            <div class="mt-3">
+                                <span class="badge bg-success" id="trendBadge">稳定</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细数据表格 -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-table"></i> 历史记录详情</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>日期</th>
+                                            <th>直播场次</th>
+                                            <th>总时长</th>
+                                            <th>峰值观众</th>
+                                            <th>总观众</th>
+                                            <th>点赞数</th>
+                                            <th>礼物数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载状态 -->
+        <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+            <p class="mt-2">正在加载数据...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let trendChart = null;
+        let currentUser = null;
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserList();
+            setDefaultDates();
+        });
+
+        // 设置默认日期
+        function setDefaultDates() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+            document.getElementById('startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+        }
+
+        // 加载用户列表
+        async function loadUserList() {
+            try {
+                const response = await fetch('/api/history/users');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const userSelect = document.getElementById('userSelect');
+                    const exportUser = document.getElementById('exportUser');
+                    
+                    // 清空现有选项
+                    userSelect.innerHTML = '<option value="">选择要分析的用户...</option>';
+                    exportUser.innerHTML = '<option value="">所有用户</option>';
+                    
+                    // 添加用户选项
+                    data.users.forEach(user => {
+                        const option1 = new Option(`@${user}`, user);
+                        const option2 = new Option(`@${user}`, user);
+                        userSelect.add(option1);
+                        exportUser.add(option2);
+                    });
+                }
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+            }
+        }
+
+        // 加载分析数据
+        document.getElementById('loadAnalytics').addEventListener('click', async function() {
+            const userId = document.getElementById('userSelect').value;
+            const days = document.getElementById('dayRange').value;
+            
+            if (!userId) {
+                alert('请选择要分析的用户');
+                return;
+            }
+            
+            currentUser = userId;
+            showLoading(true);
+            
+            try {
+                // 获取分析数据
+                const analyticsResponse = await fetch(`/api/history/analytics/${userId}?days=${days}`);
+                const analyticsData = await analyticsResponse.json();
+                
+                // 获取历史数据
+                const historyResponse = await fetch(`/api/history/user/${userId}?days=${days}`);
+                const historyData = await historyResponse.json();
+                
+                if (analyticsData.status === 'success' && historyData.status === 'success') {
+                    displayAnalytics(analyticsData.analytics);
+                    displayHistory(historyData.data);
+                    updateTrendChart(historyData.data);
+                    
+                    document.getElementById('analyticsSection').style.display = 'block';
+                } else {
+                    alert('获取数据失败');
+                }
+            } catch (error) {
+                console.error('加载分析数据失败:', error);
+                alert('加载数据时发生错误');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // 显示分析统计
+        function displayAnalytics(analytics) {
+            document.getElementById('totalSessions').textContent = analytics.total_sessions;
+            document.getElementById('avgDuration').textContent = analytics.avg_duration;
+            document.getElementById('peakViewers').textContent = analytics.peak_viewers.toLocaleString();
+            document.getElementById('totalLikes').textContent = analytics.total_likes.toLocaleString();
+            document.getElementById('bestTime').textContent = analytics.best_time || '暂无数据';
+            
+            // 设置趋势标识
+            const trendBadge = document.getElementById('trendBadge');
+            trendBadge.className = 'badge';
+            if (analytics.trend === 'rising') {
+                trendBadge.className += ' bg-success';
+                trendBadge.textContent = '上升';
+            } else if (analytics.trend === 'falling') {
+                trendBadge.className += ' bg-danger';
+                trendBadge.textContent = '下降';
+            } else {
+                trendBadge.className += ' bg-secondary';
+                trendBadge.textContent = '稳定';
+            }
+        }
+
+        // 显示历史数据表格
+        function displayHistory(history) {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+            
+            history.forEach(day => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${day.date}</td>
+                    <td>${day.total_sessions}</td>
+                    <td>${Math.round(day.total_duration / 60)} 分钟</td>
+                    <td>${day.peak_viewers.toLocaleString()}</td>
+                    <td>${day.total_viewers.toLocaleString()}</td>
+                    <td>${day.total_likes.toLocaleString()}</td>
+                    <td>${day.total_gifts.toLocaleString()}</td>
+                `;
+            });
+        }
+
+        // 更新趋势图表
+        function updateTrendChart(history) {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            if (trendChart) {
+                trendChart.destroy();
+            }
+            
+            const labels = history.map(day => day.date).reverse();
+            const viewers = history.map(day => day.peak_viewers).reverse();
+            const likes = history.map(day => day.total_likes).reverse();
+            
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '峰值观众数',
+                        data: viewers,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.1,
+                        yAxisID: 'y'
+                    }, {
+                        label: '总点赞数',
+                        data: likes,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: 0.1,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '观众数'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '点赞数'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // 导出数据
+        document.getElementById('exportData').addEventListener('click', async function() {
+            const userId = document.getElementById('exportUser').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (!startDate || !endDate) {
+                alert('请选择日期范围');
+                return;
+            }
+            
+            const params = new URLSearchParams();
+            if (userId) params.append('unique_id', userId);
+            if (startDate) params.append('start_date', startDate);
+            if (endDate) params.append('end_date', endDate);
+            
+            try {
+                const response = await fetch(`/api/history/export?${params}`);
+                if (response.ok) {
+                    // 创建下载链接
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `tiktok_history_${startDate}_${endDate}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    const error = await response.json();
+                    alert(`导出失败: ${error.error}`);
+                }
+            } catch (error) {
+                console.error('导出数据失败:', error);
+                alert('导出数据时发生错误');
+            }
+        });
+
+        // 显示/隐藏加载状态
+        function showLoading(show) {
+            document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
+            document.getElementById('analyticsSection').style.display = show ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html> 

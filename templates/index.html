@@ -1,0 +1,2478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok直播数据监控</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            font-weight: bold;
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .stat-card .card-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #333;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .text-purple {
+            color: #6f42c1 !important;
+        }
+        .status-badge {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+        .comment-box {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .comment-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .comment-user {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .comment-text {
+            word-break: break-all;
+        }
+        .gift-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .gift-user {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .navbar-nav .nav-item .nav-link {
+            cursor: pointer;
+        }
+        #active-streams-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stream-card {
+            width: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .stream-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .stream-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .active-stream-card {
+            border: 3px solid #198754;
+        }
+        .stream-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">TikTok直播数据监控</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="modal" data-bs-target="#startMonitorModal">
+                            <i class="fas fa-plus"></i> 添加监控
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="stop-all-link">
+                            <i class="fas fa-stop"></i> 停止所有监控
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history">
+                            <i class="fas fa-chart-line"></i> 历史数据分析
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/monitor_control">
+                            <i class="fas fa-cogs"></i> 监控控制台
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i> 设置
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" id="clear-history-link"><i class="fas fa-trash"></i> 清除历史数据</a></li>
+                            <li><a class="dropdown-item" id="data-stats-link"><i class="fas fa-info-circle"></i> 数据使用统计</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- 监控流量大盘 -->
+        <div id="dashboard-container" class="mb-4">
+            <!-- 总览统计卡片 -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-2">
+                                <i class="fas fa-video fa-2x"></i>
+                            </div>
+                            <h6 class="card-title text-uppercase mb-2">活跃直播间</h6>
+                            <h2 class="display-6 fw-bold mb-2" id="total-streams">0</h2>
+                            <small>正在监控的直播间数量</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-2">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                            <h6 class="card-title text-uppercase mb-2">累计观众总数</h6>
+                            <h2 class="display-6 fw-bold mb-2" id="total-viewers">0</h2>
+                            <small>所有直播间累计观众总和</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-2">
+                                <i class="fas fa-chart-line fa-2x"></i>
+                            </div>
+                            <h6 class="card-title text-uppercase mb-2">当前平均观众</h6>
+                            <h2 class="display-6 fw-bold mb-2" id="avg-viewers">0</h2>
+                            <small>每个直播间平均当前观众</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-2">
+                                <i class="fas fa-trophy fa-2x"></i>
+                            </div>
+                            <h6 class="card-title text-uppercase mb-2">峰值观众数</h6>
+                            <h2 class="display-6 fw-bold mb-2" id="peak-viewers">0</h2>
+                            <small>历史最高同时在线</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 趋势图表 -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0 text-dark fw-bold">
+                                    <i class="fas fa-chart-area text-primary me-2"></i>
+                                    当前观众数趋势图 (分钟级)
+                                </h5>
+                                <small class="text-muted">实时更新</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="dashboard-chart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0 text-dark fw-bold">
+                                <i class="fas fa-chart-pie text-success me-2"></i>
+                                累计观众权重分析
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="weight-chart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细数据表格 -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">直播间详细数据</h5>
+                            <button class="btn btn-sm btn-outline-primary" onclick="refreshTable()">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="streams-table">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>直播间</th>
+                                            <th>状态</th>
+                                            <th>当前观众</th>
+                                            <th>累计观众</th>
+                                            <th>点赞数</th>
+                                            <th>评论数</th>
+                                            <th>礼物数</th>
+                                            <th>权重占比</th>
+                                            <th>开播时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="streams-table-body">
+                                        <tr>
+                                            <td colspan="10" class="text-center text-muted">暂无数据</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 时间段分析和排行 -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">时间段分析</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="time-analysis">
+                                <div class="row text-center">
+                                    <div class="col-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <h6 class="text-muted mb-1">凌晨 (0-6)</h6>
+                                            <h4 class="text-secondary mb-0" id="time-0-6">0</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <h6 class="text-muted mb-1">上午 (6-12)</h6>
+                                            <h4 class="text-info mb-0" id="time-6-12">0</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <h6 class="text-muted mb-1">下午 (12-18)</h6>
+                                            <h4 class="text-warning mb-0" id="time-12-18">0</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="p-3 bg-light rounded">
+                                            <h6 class="text-muted mb-1">晚上 (18-24)</h6>
+                                            <h4 class="text-danger mb-0" id="time-18-24">0</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">热门直播间排行</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="top-streams-list">
+                                <p class="text-muted text-center">暂无数据</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 活跃直播卡片 -->
+        <div id="active-streams-container" class="mb-4"></div>
+
+        <!-- 主要内容区域 -->
+        <div class="row" id="content-area">
+            <!-- 这里会动态加载选定的直播数据 -->
+            <div class="col-12 text-center py-5">
+                <h3>请添加监控或选择一个已有的直播</h3>
+                <p>使用上方的"添加监控"按钮开始新的监控</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 开始监控模态框 -->
+    <div class="modal fade" id="startMonitorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加TikTok直播监控</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="monitorForm">
+                        <div class="mb-3">
+                            <label for="roomId" class="form-label">TikTok主播ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text">@</span>
+                                <input type="text" class="form-control" id="roomId" placeholder="输入主播ID（不需要@）">
+                            </div>
+                            <div class="form-text">例如: lisa 或 tiktoker123</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sessionId" class="form-label">SessionID (可选)</label>
+                            <input type="text" class="form-control" id="sessionId" placeholder="用于绕过年龄限制的直播间">
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    仅在监控年龄限制的直播间时需要提供。
+                                    <a href="#" data-bs-toggle="collapse" data-bs-target="#sessionHelp" aria-expanded="false">
+                                        如何获取？
+                                    </a>
+                                </small>
+                                <div class="collapse mt-2" id="sessionHelp">
+                                    <div class="card card-body">
+                                        <ol class="small">
+                                            <li>在浏览器中打开 TikTok 并登录</li>
+                                            <li>按 F12 打开开发者工具</li>
+                                            <li>切换到 "Application" 或 "存储" 标签</li>
+                                            <li>在左侧展开 "Cookies" → "https://www.tiktok.com"</li>
+                                            <li>找到名为 "sessionid" 的 cookie，复制其值</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="antiDetection">
+                                <label class="form-check-label" for="antiDetection">
+                                    <i class="fas fa-shield-alt text-warning me-1"></i>
+                                    启用伪装模式 (防检测)
+                                </label>
+                            </div>
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    启用后将随机化请求头、添加随机延迟，降低被TikTok检测为爬虫的风险
+                                </small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="startMonitorBtn">开始监控</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容模板 -->
+    <template id="stream-content-template">
+        <!-- 清除详细信息卡片 -->
+        <div class="col-md-12 mb-4">
+            <div class="card border-secondary">
+                <div class="card-body text-center py-3">
+                    <button class="btn btn-outline-secondary" onclick="clearDetailView()">
+                        <i class="fas fa-times me-2"></i>清除详细信息
+                    </button>
+                    <small class="text-muted d-block mt-2">点击可返回主界面并释放计算资源</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 状态概览 -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <span>直播间状态</span>
+                    <button class="btn btn-sm btn-danger stop-monitor-btn" data-uid="">停止监控</button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center mb-3">
+                                <div>
+                                    <h5 class="mb-0 host-name"></h5>
+                                    <p class="mb-0 text-muted room-title"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mt-2">
+                                <span class="status-badge badge bg-success">在线</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div>开播时间: <span class="start-time">-</span></div>
+                            <div class="mt-2">直播时长: <span class="duration">-</span></div>
+                        </div>
+                        <div class="col-md-2">
+                            <!-- 移除数据更新时间显示，已移至流卡片 -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计数据 -->
+        <div class="col-md-12 mb-4">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <div class="stat-number current-viewers">0</div>
+                            <div class="stat-label">当前观众</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-eye fa-2x text-success mb-2"></i>
+                            <div class="stat-number total-viewers">0</div>
+                            <div class="stat-label">累计观众</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                            <div class="stat-number total-likes">0</div>
+                            <div class="stat-label">点赞数</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-comments fa-2x text-info mb-2"></i>
+                            <div class="stat-number total-comments">0</div>
+                            <div class="stat-label">评论数</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-user-plus fa-2x text-warning mb-2"></i>
+                            <div class="stat-number total-follows">0</div>
+                            <div class="stat-label">关注数</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-gift fa-2x text-purple mb-2"></i>
+                            <div class="stat-number total-gifts">0</div>
+                            <div class="stat-label">礼物数</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图表 -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <span>实时数据图表</span>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">日期</span>
+                                <input type="date" class="form-control" id="chartDate" onchange="loadChartData()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="btn-group btn-group-sm w-100">
+                                <button type="button" class="btn btn-outline-light" onclick="resetChartZoom()">
+                                    <i class="fas fa-expand-arrows-alt"></i> 重置
+                                </button>
+                                <button type="button" class="btn btn-outline-light" onclick="showLast30Minutes()">
+                                    <i class="fas fa-clock"></i> 30分钟
+                                </button>
+                                <button type="button" class="btn btn-outline-light" onclick="showFullSession()">
+                                    <i class="fas fa-eye"></i> 全览
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- 固定大小的图表容器，防止抖动 -->
+                    <div class="chart-container" style="position: relative; height: 400px; width: 100%; overflow: hidden;">
+                        <canvas class="viewer-chart"></canvas>
+                    </div>
+                    <div class="mt-3">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <small class="text-muted">峰值观众</small><br>
+                                <span class="fw-bold text-primary" id="chartPeakViewers">0</span>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">平均观众</small><br>
+                                <span class="fw-bold text-success" id="chartAvgViewers">0</span>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">直播时长</small><br>
+                                <span class="fw-bold text-info" id="chartDuration">0分钟</span>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">数据点</small><br>
+                                <span class="fw-bold text-warning" id="chartDataPoints">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-muted text-center">
+                        <small><i class="fas fa-info-circle"></i> 滚轮缩放 | 拖拽平移 | 选择日期查看历史数据</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 礼物和评论 -->
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-warning text-white">礼物记录</div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush gift-container">
+                                <div class="list-group-item text-center">暂无礼物记录</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">评论区</div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush comment-container">
+                                <div class="list-group-item text-center">暂无评论</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 流卡片模板 -->
+    <template id="stream-card-template">
+        <div class="card stream-card">
+            <div class="card-body p-3">
+                <div class="stream-info">
+                    <img src="" alt="头像" class="stream-avatar">
+                    <div>
+                        <h6 class="mb-0 host-name"></h6>
+                        <span class="badge status-badge"></span>
+                    </div>
+                </div>
+                <div class="mt-2 text-center">
+                    <div class="text-primary current-viewers mb-1"></div>
+                    <div class="text-muted room-title small mb-1"></div>
+                    <div class="text-muted last-update-time small">数据更新: 未知</div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+    <script>
+        // 全局变量
+        let charts = {};
+        let activeStreams = {};
+        let currentUid = null;
+        let updateInterval;
+        let socket = null;
+        let dashboardChart = null;
+        let weightChart = null;
+        let dashboardStats = {
+            totalViewers: 0,
+            peakViewers: 0,
+            timeSlots: {
+                '0-6': 0,
+                '6-12': 0,
+                '12-18': 0,
+                '18-24': 0
+            },
+            hourlyData: {},
+            streamWeights: {}
+        };
+
+        // 格式化最后更新时间
+        function formatLastUpdate(lastUpdate) {
+            if (!lastUpdate) return '未知';
+            
+            try {
+                const updateTime = new Date(lastUpdate);
+                const now = new Date();
+                const diffSeconds = Math.floor((now - updateTime) / 1000);
+                
+                if (diffSeconds < 10) return '刚刚';
+                if (diffSeconds < 60) return `${diffSeconds}秒前`;
+                
+                const diffMinutes = Math.floor(diffSeconds / 60);
+                if (diffMinutes < 60) return `${diffMinutes}分钟前`;
+                
+                const diffHours = Math.floor(diffMinutes / 60);
+                if (diffHours < 24) return `${diffHours}小时前`;
+                
+                return updateTime.toLocaleDateString() + ' ' + updateTime.toLocaleTimeString();
+            } catch (e) {
+                return '格式错误';
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化 Socket.IO 连接
+            socket = io();
+            
+            // Socket.IO 事件监听
+            setupSocketEvents();
+            
+            // 绑定开始监控按钮事件
+            document.getElementById('startMonitorBtn').addEventListener('click', startMonitor);
+            
+            // 绑定停止所有监控按钮事件
+            document.getElementById('stop-all-link').addEventListener('click', stopAllMonitors);
+            
+            // 初始化页面，加载现有监控
+            fetchActiveMonitors();
+            
+            // 初始化大盘图表
+            initDashboardCharts();
+            
+            // 设置定时更新
+            updateInterval = setInterval(updateAllData, 10000); // 10秒更新一次
+            
+            // 每秒更新相对时间显示
+            setInterval(() => {
+                // 更新所有流卡片的数据更新时间
+                document.querySelectorAll('.last-update-time').forEach(element => {
+                    const updateTime = element.getAttribute('data-update-time');
+                    if (updateTime) {
+                        const timeDiff = Math.floor((Date.now() - parseInt(updateTime)) / 1000);
+                        if (timeDiff < 10) {
+                            element.textContent = '数据更新: 刚刚';
+                        } else if (timeDiff < 60) {
+                            element.textContent = `数据更新: ${timeDiff}秒前`;
+                        } else {
+                            element.textContent = `数据更新: ${Math.floor(timeDiff / 60)}分钟前`;
+                        }
+                    }
+                });
+            }, 1000); // 每秒更新一次
+        });
+        
+        // 设置 Socket.IO 事件监听
+        function setupSocketEvents() {
+            // 连接事件
+            socket.on('connect', function() {
+                console.log('已连接到服务器');
+                // 连接成功后立即获取活跃监控
+                setTimeout(() => {
+                    console.log('Socket.IO连接后获取活跃监控');
+                    fetchActiveMonitors();
+                }, 1000);
+            });
+            
+            // 断开连接事件
+            socket.on('disconnect', function() {
+                console.log('与服务器断开连接');
+            });
+            
+            // 观众数量更新事件
+            socket.on('viewer_count', function(data) {
+                console.log('收到观众数量更新:', data);
+                if (activeStreams[data.unique_id]) {
+                    activeStreams[data.unique_id].current_viewers = data.count;
+                    
+                    // 更新当前显示的直播间数据
+                    if (data.unique_id === currentUid) {
+                        document.querySelector('.current-viewers').textContent = data.count;
+                        
+                        // 更新图表
+                        if (charts[data.unique_id]) {
+                            const chart = charts[data.unique_id];
+                            
+                            // 添加新数据点
+                            chart.data.labels.push(data.timestamp);
+                            chart.data.datasets[0].data.push(data.count);
+                            
+                            // 保持最多显示100个数据点
+                            if (chart.data.labels.length > 100) {
+                                chart.data.labels.shift();
+                                chart.data.datasets[0].data.shift();
+                            }
+                            
+                            chart.update();
+                        }
+                    }
+                    
+                    // 更新流卡片
+                    const streamCard = document.getElementById(`stream-card-${data.unique_id}`);
+                    if (streamCard) {
+                        streamCard.querySelector('.current-viewers').textContent = `👁️ ${data.count} 观众`;
+                    }
+                }
+            });
+            
+            // 评论事件
+            socket.on('comment', function(data) {
+                console.log('收到评论:', data);
+                if (data.unique_id === currentUid) {
+                    const commentContainer = document.querySelector('.comment-container');
+                    
+                    // 移除"暂无评论"提示
+                    if (commentContainer.querySelector('.text-center')) {
+                        commentContainer.innerHTML = '';
+                    }
+                    
+                    // 添加新评论
+                    const commentTime = moment(data.timestamp).format('HH:mm:ss');
+                    const commentItem = document.createElement('div');
+                    commentItem.className = 'list-group-item comment-item';
+                    commentItem.innerHTML = `
+                        <small class="text-muted">${commentTime}</small>
+                        <span class="comment-user">${data.user.nickname}:</span>
+                        <span class="comment-text">${data.comment}</span>
+                    `;
+                    
+                    // 插入到容器开头
+                    commentContainer.insertBefore(commentItem, commentContainer.firstChild);
+                    
+                    // 限制显示数量
+                    if (commentContainer.children.length > 50) {
+                        commentContainer.removeChild(commentContainer.lastChild);
+                    }
+                    
+                    // 更新统计信息
+                    if (activeStreams[data.unique_id]) {
+                        activeStreams[data.unique_id].total_comments = 
+                            (activeStreams[data.unique_id].total_comments || 0) + 1;
+                    }
+                }
+            });
+            
+            // 礼物事件
+            socket.on('gift', function(data) {
+                console.log('收到礼物:', data);
+                if (data.unique_id === currentUid) {
+                    const giftContainer = document.querySelector('.gift-container');
+                    
+                    // 移除"暂无礼物记录"提示
+                    if (giftContainer.querySelector('.text-center')) {
+                        giftContainer.innerHTML = '';
+                    }
+                    
+                    // 添加新礼物记录
+                    const giftTime = moment(data.timestamp).format('HH:mm:ss');
+                    const giftItem = document.createElement('div');
+                    giftItem.className = 'list-group-item gift-item';
+                    giftItem.innerHTML = `
+                        <small class="text-muted">${giftTime}</small>
+                        <span class="gift-user">${data.user.nickname}</span>
+                        送出了 ${data.gift.count}个 ${data.gift.name}
+                    `;
+                    
+                    // 插入到容器开头
+                    giftContainer.insertBefore(giftItem, giftContainer.firstChild);
+                    
+                    // 限制显示数量
+                    if (giftContainer.children.length > 50) {
+                        giftContainer.removeChild(giftContainer.lastChild);
+                    }
+                    
+                    // 更新统计信息
+                    if (activeStreams[data.unique_id]) {
+                        activeStreams[data.unique_id].total_gifts = 
+                            (activeStreams[data.unique_id].total_gifts || 0) + 1;
+                        
+                        // 更新礼物数量显示
+                        if (currentUid === data.unique_id) {
+                            document.querySelector('.total-gifts').textContent = 
+                                activeStreams[data.unique_id].total_gifts;
+                        }
+                    }
+                }
+            });
+            
+            // 点赞事件
+            socket.on('like', function(data) {
+                console.log('收到点赞:', data);
+                if (data.unique_id === currentUid) {
+                    // 更新点赞统计
+                    if (activeStreams[data.unique_id]) {
+                        activeStreams[data.unique_id].total_likes = data.total_likes || 
+                            activeStreams[data.unique_id].total_likes;
+                    }
+                }
+            });
+            
+            // 流数据更新事件 - 新增
+            socket.on('stream_data', function(data) {
+                console.log('收到流数据更新:', data);
+                
+                // 确保数据有unique_id
+                if (!data.unique_id) {
+                    console.error('收到的流数据没有unique_id');
+                    return;
+                }
+                
+                const uid = data.unique_id.startsWith('@') ? data.unique_id.substring(1) : data.unique_id;
+                
+                // 更新或创建activeStreams中的数据
+                if (!activeStreams[uid]) {
+                    console.log(`首次收到 ${uid} 的数据，创建新记录`);
+                    activeStreams[uid] = data;
+                } else {
+                    console.log(`更新 ${uid} 的现有数据`);
+                    // 更新本地数据
+                    activeStreams[uid] = {
+                        ...activeStreams[uid],
+                        current_viewers: data.current_viewers,
+                        total_viewers: data.total_viewers,
+                        total_likes: data.total_likes,
+                        total_comments: data.total_comments,
+                        total_gifts: data.total_gifts,
+                        last_update_time: data.last_update_time,
+                        chart_data: data.chart_data,
+                        is_live: data.is_live
+                    };
+                }
+                
+                // 创建或更新流卡片
+                updateStreamCard(uid, activeStreams[uid]);
+                
+                // 如果是当前显示的直播，更新UI
+                if (currentUid === uid) {
+                    // 更新观众数
+                    const currentViewersElement = document.querySelector('.current-viewers');
+                    if (currentViewersElement) {
+                        currentViewersElement.textContent = data.current_viewers || 0;
+                    }
+                    
+                    // 更新累计观众
+                    const totalViewersElement = document.querySelector('.total-viewers');
+                    if (totalViewersElement) {
+                        totalViewersElement.textContent = (data.total_viewers || 0).toLocaleString();
+                    }
+                    
+                    // 更新点赞数
+                    const totalLikesElement = document.querySelector('.total-likes');
+                    if (totalLikesElement) {
+                        totalLikesElement.textContent = (data.total_likes || 0).toLocaleString();
+                    }
+                    
+                    // 更新礼物数
+                    const totalGiftsElement = document.querySelector('.total-gifts');
+                    if (totalGiftsElement) {
+                        totalGiftsElement.textContent = (data.total_gifts || 0).toLocaleString();
+                    }
+                    
+                    // 更新评论数
+                    const totalCommentsElement = document.querySelector('.total-comments');
+                    if (totalCommentsElement) {
+                        totalCommentsElement.textContent = (data.total_comments || 0).toLocaleString();
+                    }
+                    
+                    // 更新关注数
+                    const totalFollowsElement = document.querySelector('.total-follows');
+                    if (totalFollowsElement) {
+                        totalFollowsElement.textContent = (data.total_follows || 0).toLocaleString();
+                    }
+                    
+                    // 更新分享数
+                    const totalSharesElement = document.querySelector('.total-shares');
+                    if (totalSharesElement) {
+                        totalSharesElement.textContent = (data.total_shares || 0).toLocaleString();
+                    }
+                    
+                    // 更新图表数据（无抖动更新）
+                    if (charts[uid] && data.chart_data && uid === currentUid) {
+                        // 只有当前显示的图表才实时更新
+                        const chart = charts[uid];
+                        const timestamps = data.chart_data.timestamps || [];
+                        const viewerCounts = data.chart_data.viewer_counts || [];
+                        
+                        // 只显示最近30分钟的数据
+                        const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+                        const now = new Date();
+                        
+                        const filteredData = timestamps.map((timestamp, index) => {
+                            const timeDate = new Date();
+                            const [hours, minutes] = timestamp.split(':');
+                            timeDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                            
+                            if (timeDate > now) {
+                                timeDate.setDate(timeDate.getDate() - 1);
+                            }
+                            
+                            return {
+                                timestamp,
+                                viewerCount: viewerCounts[index] || 0,
+                                time: timeDate
+                            };
+                        }).filter(item => item.time >= thirtyMinutesAgo);
+                        
+                        const filteredTimestamps = filteredData.map(item => item.timestamp);
+                        const filteredViewerCounts = filteredData.map(item => item.viewerCount);
+                        
+                        // 无动画更新，防止抖动
+                        chart.data.labels = filteredTimestamps;
+                        chart.data.datasets[0].data = filteredViewerCounts;
+                        chart.update('none'); // 'none' 模式表示无动画
+                        
+                        // 更新当前数据缓存
+                        currentChartData = data.chart_data;
+                        
+                        // 更新统计信息
+                        updateChartStats(filteredViewerCounts, filteredTimestamps);
+                    }
+                }
+                
+                // 重新排序流卡片
+                sortStreamCards();
+                
+                // 更新大盘数据
+                updateDashboard();
+            });
+            
+            // 增加对update事件的处理
+            socket.on('update', function(data) {
+                console.log('收到数据更新:', data);
+                if (activeStreams[data.unique_id]) {
+                    // 更新本地数据
+                    activeStreams[data.unique_id].current_viewers = data.viewer_count;
+                    activeStreams[data.unique_id].total_viewers = data.total_viewers;
+                    activeStreams[data.unique_id].total_likes = data.like_count;
+                    activeStreams[data.unique_id].total_comments = data.comment_count;
+                    activeStreams[data.unique_id].total_gifts = data.gift_count;
+                    
+                    // 如果是当前显示的直播，更新UI
+                    if (currentUid === data.unique_id) {
+                        // 更新观众数
+                        document.querySelector('.current-viewers').textContent = data.viewer_count;
+                        
+                        // 更新累计观众
+                        document.querySelector('.total-viewers').textContent = data.total_viewers;
+                        
+                        // 更新点赞数
+                        document.querySelector('.total-likes').textContent = data.like_count;
+                        
+                        // 更新礼物数
+                        document.querySelector('.total-gifts').textContent = data.gift_count;
+                    }
+                    
+                    // 更新流卡片
+                    const streamCard = document.getElementById(`stream-card-${data.unique_id}`);
+                    if (streamCard) {
+                        streamCard.querySelector('.current-viewers').textContent = `👁️ ${data.viewer_count} 观众`;
+                    }
+                }
+            });
+            
+            // 增加连接错误处理
+            socket.on('connect_error', function(error) {
+                console.error('SocketIO连接错误:', error);
+            });
+            
+            // 增加重连事件处理
+            socket.on('reconnect', function(attemptNumber) {
+                console.log(`SocketIO重连成功，尝试次数: ${attemptNumber}`);
+                // 重连后刷新数据
+                fetchActiveMonitors();
+            });
+        }
+
+        // 获取活跃监控列表
+        function fetchActiveMonitors() {
+            console.log('正在获取活跃监控列表...');
+            fetch('/list_monitors')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('获取到监控列表:', data);
+                    if (data.monitors && data.monitors.length > 0) {
+                        console.log('发现活跃监控:', data.monitors);
+                        // 如果有活跃监控，获取它们的数据并显示
+                        data.monitors.forEach(uid => {
+                            console.log('正在获取流数据:', uid);
+                            fetchStreamData(uid);
+                        });
+                    } else {
+                        console.log('没有活跃监控');
+                        // 没有活跃监控，显示空状态
+                        document.getElementById('content-area').innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <h3>请添加监控或选择一个已有的直播</h3>
+                                <p>使用上方的"添加监控"按钮开始新的监控</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('获取监控列表失败:', error);
+                    // 出错时也显示空状态
+                    document.getElementById('content-area').innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <h3>请添加监控或选择一个已有的直播</h3>
+                            <p>使用上方的"添加监控"按钮开始新的监控</p>
+                        </div>
+                    `;
+                });
+        }
+
+        // 获取流数据
+        function fetchStreamData(uid) {
+            // 确保移除@符号
+            if (uid.startsWith('@')) {
+                uid = uid.substring(1);
+            }
+            
+            console.log(`正在获取 ${uid} 的流数据...`);
+            return fetch(`/get_stream_data?unique_id=${uid}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`获取到 ${uid} 的数据:`, data);
+                    // 判断请求结果状态
+                    if (data.status === 'not_found') {
+                        console.log(`直播间 ${uid} 不存在或已关闭`);
+                        
+                        // 从激活的流列表中移除
+                        delete activeStreams[uid];
+                        
+                        // 如果是当前显示的流，清空内容区域
+                        if (uid === currentUid) {
+                            currentUid = null;
+                            document.getElementById('content-area').innerHTML = `
+                                <div class="col-12 text-center py-5">
+                                    <h3>请添加监控或选择一个已有的直播</h3>
+                                    <p>使用上方的"添加监控"按钮开始新的监控</p>
+                                </div>
+                            `;
+                            
+                            // 如果还有其他流，显示第一个
+                            const remainingUids = Object.keys(activeStreams);
+                            if (remainingUids.length > 0) {
+                                displayStreamData(remainingUids[0]);
+                            }
+                        }
+                        
+                        // 移除流卡片
+                        const card = document.getElementById(`stream-card-${uid}`);
+                        if (card) {
+                            card.remove();
+                        }
+                        
+                        return data; // 返回数据，即使是not_found状态
+                    }
+                    
+                    console.log(`存储 ${uid} 的数据到activeStreams`);
+                    // 存储数据
+                    activeStreams[uid] = data;
+                    
+                    console.log(`更新 ${uid} 的流卡片`);
+                    // 更新流卡片
+                    updateStreamCard(uid, data);
+                    
+                    // 如果是当前选中的流或者是第一个添加的流，显示详细数据
+                    if (uid === currentUid || (currentUid === null && Object.keys(activeStreams).length === 1)) {
+                        console.log(`显示 ${uid} 的详细数据`);
+                        currentUid = uid;
+                        displayStreamData(uid);
+                    }
+                    
+                    return data; // 返回获取的数据
+                })
+                .catch(error => {
+                    console.error(`获取${uid}的数据失败:`, error);
+                    throw error; // 重新抛出错误，让调用者处理
+                });
+        }
+
+        // 更新流卡片
+        function updateStreamCard(uid, data) {
+            // 确保移除@符号
+            if (uid.startsWith('@')) {
+                uid = uid.substring(1);
+            }
+            
+            console.log(`正在更新 ${uid} 的流卡片，数据:`, data);
+            const container = document.getElementById('active-streams-container');
+            let streamCard = document.getElementById(`stream-card-${uid}`);
+            const isLive = data.is_live;
+            
+            if (!streamCard) {
+                console.log(`创建新的流卡片: ${uid}`);
+                // 创建新卡片
+                const template = document.getElementById('stream-card-template');
+                streamCard = template.content.cloneNode(true).querySelector('.stream-card');
+                streamCard.id = `stream-card-${uid}`;
+                streamCard.setAttribute('data-uid', uid);
+                
+                // 添加点击事件
+                streamCard.addEventListener('click', function() {
+                    console.log(`流卡片被点击: ${uid}`);
+                    displayStreamData(uid);
+                });
+                
+                container.appendChild(streamCard);
+                console.log(`流卡片已添加到容器: ${uid}`);
+            } else {
+                console.log(`更新现有流卡片: ${uid}`);
+            }
+            
+            // 更新卡片内容
+            const roomInfo = data.room_info || {};
+            streamCard.querySelector('.host-name').textContent = roomInfo.host_name || uid.replace('@', '');
+            // 不显示头像图片
+            const avatarImg = streamCard.querySelector('.stream-avatar');
+            if (avatarImg) {
+                avatarImg.style.display = 'none';
+            }
+            streamCard.querySelector('.room-title').textContent = roomInfo.room_title || '';
+            
+            // 更新状态徽章
+            const statusBadge = streamCard.querySelector('.status-badge');
+            statusBadge.textContent = isLive ? '在线' : '离线';
+            statusBadge.className = `badge status-badge ${isLive ? 'bg-success' : 'bg-secondary'}`;
+            
+            // 更新观众数
+            streamCard.querySelector('.current-viewers').textContent = `👁️ ${data.current_viewers || 0} 观众`;
+            
+            // 更新数据更新时间
+            const lastUpdateElement = streamCard.querySelector('.last-update-time');
+            if (lastUpdateElement && data.last_update_time) {
+                lastUpdateElement.textContent = `数据更新: ${formatLastUpdate(data.last_update_time)}`;
+                lastUpdateElement.setAttribute('data-update-time', new Date(data.last_update_time).getTime().toString());
+            } else if (lastUpdateElement) {
+                lastUpdateElement.textContent = '数据更新: 未知';
+            }
+            
+            // 高亮当前选中的卡片
+            if (uid === currentUid) {
+                streamCard.classList.add('active-stream-card');
+            } else {
+                streamCard.classList.remove('active-stream-card');
+            }
+            
+            // 按当前观众数重新排序流卡片
+            sortStreamCards();
+        }
+
+        // 按当前观众数排序流卡片
+        function sortStreamCards() {
+            const container = document.getElementById('active-streams-container');
+            const cards = Array.from(container.querySelectorAll('.stream-card'));
+            
+            cards.sort((a, b) => {
+                const uidA = a.getAttribute('data-uid');
+                const uidB = b.getAttribute('data-uid');
+                const viewersA = activeStreams[uidA]?.current_viewers || 0;
+                const viewersB = activeStreams[uidB]?.current_viewers || 0;
+                return viewersB - viewersA; // 降序排列
+            });
+            
+            // 重新排列DOM元素
+            cards.forEach(card => container.appendChild(card));
+        }
+
+        // 显示流详细数据
+        function displayStreamData(uid) {
+            // 确保移除@符号
+            if (uid.startsWith('@')) {
+                uid = uid.substring(1);
+            }
+            
+            console.log('=== displayStreamData 被调用 ===');
+            console.log('点击displayStreamData，UID:', uid);
+            console.log('当前activeStreams:', activeStreams);
+            console.log('activeStreams中的数据:', activeStreams[uid]);
+            console.log('Object.keys(activeStreams):', Object.keys(activeStreams));
+            
+            // 更新当前选中的UID
+            currentUid = uid;
+            
+            // 更新卡片高亮状态
+            document.querySelectorAll('.stream-card').forEach(card => {
+                if (card.getAttribute('data-uid') === uid) {
+                    card.classList.add('active-stream-card');
+                    console.log('已高亮卡片:', uid);
+                } else {
+                    card.classList.remove('active-stream-card');
+                }
+            });
+            
+            const data = activeStreams[uid];
+            if (!data) {
+                console.error('没有找到UID对应的数据:', uid);
+                console.log('尝试的所有可能UID格式:');
+                console.log(`- "${uid}"`);
+                console.log(`- "@${uid}"`);
+                console.log(`- "${uid.replace('@', '')}"`);
+                
+                // 尝试不同的UID格式查找数据
+                let foundData = null;
+                let foundUid = null;
+                
+                // 尝试当前UID
+                if (activeStreams[uid]) {
+                    foundData = activeStreams[uid];
+                    foundUid = uid;
+                }
+                // 尝试带@的UID
+                else if (activeStreams[`@${uid}`]) {
+                    foundData = activeStreams[`@${uid}`];
+                    foundUid = `@${uid}`;
+                }
+                // 尝试移除@的UID
+                else if (activeStreams[uid.replace('@', '')]) {
+                    foundData = activeStreams[uid.replace('@', '')];
+                    foundUid = uid.replace('@', '');
+                }
+                
+                if (foundData) {
+                    console.log('找到数据，使用UID:', foundUid);
+                    displayStreamDataWithData(foundUid, foundData);
+                    return;
+                }
+                
+                console.log('所有格式都未找到数据，尝试重新获取...');
+                
+                // 显示加载状态
+                const contentArea = document.getElementById('content-area');
+                contentArea.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                        <h3 class="mt-3">正在加载 @${uid} 的详细信息...</h3>
+                        <p>请稍候，正在获取最新数据</p>
+                    </div>
+                `;
+                
+                // 尝试重新获取数据
+                fetchStreamData(uid).then(() => {
+                    // 数据获取完成后，再次尝试显示
+                    setTimeout(() => {
+                        const newData = activeStreams[uid] || activeStreams[`@${uid}`] || activeStreams[uid.replace('@', '')];
+                        if (newData) {
+                            console.log('重新获取数据成功，显示详细信息');
+                            displayStreamData(uid);
+                        } else {
+                            console.error('重新获取数据仍然失败');
+                            contentArea.innerHTML = `
+                                <div class="col-12 text-center py-5">
+                                    <div class="alert alert-warning">
+                                        <h4>无法加载 @${uid} 的详细信息</h4>
+                                        <p>请稍后再试，或检查该用户是否还在监控列表中</p>
+                                        <button class="btn btn-primary" onclick="fetchActiveMonitors()">刷新监控列表</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }, 1000);
+                });
+                return;
+            }
+            
+            displayStreamDataWithData(uid, data);
+        }
+        
+        // 使用数据显示流详细信息
+        function displayStreamDataWithData(uid, data) {
+            console.log('开始显示详细数据:', data);
+            
+            // 清空内容区域
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = '';
+            
+            // 使用模板创建内容
+            const template = document.getElementById('stream-content-template');
+            if (!template) {
+                console.error('找不到 stream-content-template 模板');
+                contentArea.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <div class="alert alert-danger">
+                            <h4>模板加载错误</h4>
+                            <p>无法找到详细信息显示模板，请刷新页面</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const content = template.content.cloneNode(true);
+            
+            // 设置停止按钮的数据属性
+            const stopBtn = content.querySelector('.stop-monitor-btn');
+            if (stopBtn) {
+                stopBtn.setAttribute('data-uid', uid);
+                stopBtn.addEventListener('click', function() {
+                    stopMonitor(uid);
+                });
+            }
+            
+            // 更新基本信息
+            const roomInfo = data.room_info || {};
+            // 隐藏头像
+            const avatarImg = content.querySelector('.avatar-img');
+            if (avatarImg) {
+                avatarImg.style.display = 'none';
+            }
+            
+            const hostNameElement = content.querySelector('.host-name');
+            if (hostNameElement) {
+                hostNameElement.textContent = roomInfo.host_name || uid.replace('@', '');
+            }
+            
+            const roomTitleElement = content.querySelector('.room-title');
+            if (roomTitleElement) {
+                roomTitleElement.textContent = roomInfo.room_title || data.title || '';
+            }
+            
+            // 更新状态
+            const statusBadge = content.querySelector('.status-badge');
+            if (statusBadge) {
+                statusBadge.textContent = data.is_live ? '在线' : '离线';
+                statusBadge.className = `status-badge badge ${data.is_live ? 'bg-success' : 'bg-secondary'}`;
+            }
+            
+            // 更新时间
+            if (data.start_time) {
+                const startTime = moment(data.start_time);
+                const startTimeElement = content.querySelector('.start-time');
+                if (startTimeElement) {
+                    startTimeElement.textContent = startTime.format('YYYY-MM-DD HH:mm:ss');
+                }
+                
+                const durationElement = content.querySelector('.duration');
+                if (durationElement) {
+                    if (data.is_live) {
+                        // 如果还在直播中，不显示时长
+                        durationElement.textContent = '-';
+                    } else {
+                        // 如果已结束，计算总时长
+                        const endTime = moment(); // 可以用实际结束时间替换
+                        const duration = moment.duration(endTime.diff(startTime));
+                        const hours = Math.floor(duration.asHours());
+                        const minutes = Math.floor(duration.asMinutes()) % 60;
+                        durationElement.textContent = `${hours}小时${minutes}分钟`;
+                    }
+                }
+            } else {
+                const startTimeElement = content.querySelector('.start-time');
+                if (startTimeElement) startTimeElement.textContent = '-';
+                
+                const durationElement = content.querySelector('.duration');
+                if (durationElement) durationElement.textContent = '-';
+            }
+            
+            // 更新统计数据
+            const updateElement = (selector, value) => {
+                const element = content.querySelector(selector);
+                if (element) {
+                    element.textContent = value;
+                }
+            };
+            
+            updateElement('.current-viewers', data.current_viewers || 0);
+            updateElement('.total-viewers', (data.total_viewers || 0).toLocaleString());
+            updateElement('.total-likes', (data.total_likes || 0).toLocaleString());
+            updateElement('.total-comments', (data.total_comments || 0).toLocaleString());
+            updateElement('.total-follows', (data.total_follows || 0).toLocaleString());
+            updateElement('.total-gifts', (data.total_gifts || 0).toLocaleString());
+            updateElement('.total-shares', (data.total_shares || 0).toLocaleString());
+            
+            // 添加到内容区域
+            contentArea.appendChild(content);
+            
+            console.log('详细信息模板已添加到DOM');
+            
+            // 确保DOM更新完成后再初始化图表
+            setTimeout(() => {
+                // 初始化图表
+                try {
+                    initChart(uid, data.chart_data);
+                    console.log('图表初始化完成');
+                } catch (error) {
+                    console.error('图表初始化失败:', error);
+                }
+                
+                // 更新礼物和评论
+                try {
+                    updateGiftsAndComments(uid, data);
+                    console.log('礼物和评论更新完成');
+                } catch (error) {
+                    console.error('礼物和评论更新失败:', error);
+                }
+            }, 100);
+        }
+
+        // 全局图表变量
+        let currentChart = null;
+        let currentChartData = {};
+        let allHistoryData = {};
+
+        // 初始化图表
+        function initChart(uid, chartData) {
+            const ctx = document.querySelector('.viewer-chart').getContext('2d');
+            
+            // 如果已存在图表，销毁它
+            if (currentChart) {
+                currentChart.destroy();
+                currentChart = null;
+            }
+            
+            // 保存当前用户的图表数据
+            currentChartData = chartData || {};
+            currentUid = uid;
+            
+            // 设置日期选择器为今天
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('chartDate').value = today;
+            
+            // 准备数据 - 显示最近30分钟的数据
+            let timestamps = chartData?.timestamps || [];
+            let viewerCounts = chartData?.viewer_counts || [];
+            
+            // 过滤最近30分钟的数据
+            const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+            const now = new Date();
+            
+            const filteredData = timestamps.map((timestamp, index) => {
+                const timeDate = new Date();
+                const [hours, minutes] = timestamp.split(':');
+                timeDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                
+                // 如果时间是明天的（跨日），调整日期
+                if (timeDate > now) {
+                    timeDate.setDate(timeDate.getDate() - 1);
+                }
+                
+                return {
+                    timestamp,
+                    viewerCount: viewerCounts[index] || 0,
+                    time: timeDate
+                };
+            }).filter(item => item.time >= thirtyMinutesAgo);
+            
+            const filteredTimestamps = filteredData.map(item => item.timestamp);
+            const filteredViewerCounts = filteredData.map(item => item.viewerCount);
+            
+            // 创建图表
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: filteredTimestamps,
+                    datasets: [{
+                        label: '观众人数',
+                        data: filteredViewerCounts,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 2,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 0 // 禁用动画，防止抖动
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `@${uid} - 观众数变化趋势（最近30分钟）`,
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: true,
+                                    speed: 0.1
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'x'
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'x'
+                            },
+                            limits: {
+                                x: {min: 'original', max: 'original'}
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return '时间: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    return '观众数: ' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '观众数'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '时间'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 更新图表统计信息
+            updateChartStats(filteredViewerCounts, filteredTimestamps);
+            
+            // 保存到charts对象中以兼容现有代码
+            charts[uid] = currentChart;
+        }
+
+        // 更新图表统计信息
+        function updateChartStats(viewerCounts, timestamps) {
+            if (viewerCounts.length === 0) {
+                document.getElementById('chartPeakViewers').textContent = '0';
+                document.getElementById('chartAvgViewers').textContent = '0';
+                document.getElementById('chartDuration').textContent = '0分钟';
+                document.getElementById('chartDataPoints').textContent = '0';
+                return;
+            }
+            
+            const peak = Math.max(...viewerCounts);
+            const avg = Math.round(viewerCounts.reduce((a, b) => a + b, 0) / viewerCounts.length);
+            const dataPoints = viewerCounts.length;
+            
+            // 计算时长（基于数据点数量，假设每分钟一个点）
+            const duration = Math.max(dataPoints - 1, 0);
+            
+            document.getElementById('chartPeakViewers').textContent = peak.toLocaleString();
+            document.getElementById('chartAvgViewers').textContent = avg.toLocaleString();
+            document.getElementById('chartDuration').textContent = duration + '分钟';
+            document.getElementById('chartDataPoints').textContent = dataPoints.toString();
+        }
+
+        // 重置图表缩放
+        function resetChartZoom() {
+            if (currentChart) {
+                currentChart.resetZoom();
+            }
+        }
+
+        // 显示最近30分钟数据
+        function showLast30Minutes() {
+            if (currentUid && currentChartData) {
+                initChart(currentUid, currentChartData);
+            }
+        }
+
+        // 显示完整会话数据
+        function showFullSession() {
+            if (!currentUid || !currentChartData) return;
+            
+            const timestamps = currentChartData.timestamps || [];
+            const viewerCounts = currentChartData.viewer_counts || [];
+            
+            if (timestamps.length === 0) return;
+            
+            // 更新图表显示所有数据
+            if (currentChart) {
+                currentChart.data.labels = timestamps;
+                currentChart.data.datasets[0].data = viewerCounts;
+                currentChart.options.plugins.title.text = `@${currentUid} - 完整会话数据`;
+                currentChart.update('none'); // 无动画更新
+                currentChart.resetZoom();
+                
+                // 更新统计信息
+                updateChartStats(viewerCounts, timestamps);
+            }
+        }
+
+        // 加载指定日期的图表数据
+        async function loadChartData() {
+            if (!currentUid) return;
+            
+            const selectedDate = document.getElementById('chartDate').value;
+            if (!selectedDate) return;
+            
+            try {
+                // 获取历史数据
+                const response = await fetch(`/api/history/user/${currentUid}?days=1`);
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.sessions.length > 0) {
+                    // 查找选定日期的会话
+                    const targetDate = selectedDate;
+                    const sessions = data.sessions.filter(session => {
+                        const sessionDate = session.start_time.split('T')[0];
+                        return sessionDate === targetDate;
+                    });
+                    
+                    if (sessions.length > 0) {
+                        // 获取第一个会话的详细数据
+                        const sessionId = sessions[0].session_id;
+                        const detailResponse = await fetch(`/api/history/session/${currentUid}/${sessionId}`);
+                        const detailData = await detailResponse.json();
+                        
+                        if (detailData.status === 'success') {
+                            const sessionData = detailData.data;
+                            
+                            // 转换分钟数据为图表数据
+                            const minuteData = sessionData.minute_data || [];
+                            const timestamps = minuteData.map(d => d.t || d.minute);
+                            const viewerCounts = minuteData.map(d => d.v || d.current_viewers || 0);
+                            
+                            const chartData = {
+                                timestamps,
+                                viewer_counts: viewerCounts
+                            };
+                            
+                            // 更新图表
+                            if (currentChart) {
+                                currentChart.data.labels = timestamps;
+                                currentChart.data.datasets[0].data = viewerCounts;
+                                currentChart.options.plugins.title.text = `@${currentUid} - ${selectedDate} 历史数据`;
+                                currentChart.update('none');
+                                currentChart.resetZoom();
+                                
+                                // 更新统计信息
+                                updateChartStats(viewerCounts, timestamps);
+                            }
+                            
+                            console.log(`加载了 ${selectedDate} 的历史数据，${viewerCounts.length} 个数据点`);
+                        }
+                    } else {
+                        console.log(`没有找到 ${selectedDate} 的会话数据`);
+                        alert(`没有找到 ${selectedDate} 的直播数据`);
+                    }
+                } else {
+                    console.log('没有历史数据');
+                    alert('没有找到历史数据');
+                }
+            } catch (error) {
+                console.error('加载历史数据失败:', error);
+                alert('加载历史数据失败: ' + error.message);
+            }
+        }
+
+        // 更新礼物和评论
+        function updateGiftsAndComments(uid, data) {
+            // 更新礼物
+            const giftContainer = document.querySelector('.gift-container');
+            if (data.gifts && data.gifts.length > 0) {
+                giftContainer.innerHTML = '';
+                data.gifts.slice().reverse().forEach(gift => {
+                    const giftTime = moment(gift.timestamp).format('HH:mm:ss');
+                    const giftItem = document.createElement('div');
+                    giftItem.className = 'list-group-item gift-item';
+                    giftItem.innerHTML = `
+                        <small class="text-muted">${giftTime}</small>
+                        <span class="gift-user">${gift.user}</span>
+                        送出了 ${gift.gift_count}个 ${gift.gift_name}
+                    `;
+                    giftContainer.appendChild(giftItem);
+                });
+            }
+            
+            // 更新评论
+            const commentContainer = document.querySelector('.comment-container');
+            if (data.comments && data.comments.length > 0) {
+                commentContainer.innerHTML = '';
+                data.comments.slice().reverse().forEach(comment => {
+                    const commentTime = moment(comment.timestamp).format('HH:mm:ss');
+                    const commentItem = document.createElement('div');
+                    commentItem.className = 'list-group-item comment-item';
+                    commentItem.innerHTML = `
+                        <small class="text-muted">${commentTime}</small>
+                        <span class="comment-user">${comment.user}:</span>
+                        <span class="comment-text">${comment.comment}</span>
+                    `;
+                    commentContainer.appendChild(commentItem);
+                });
+            }
+        }
+
+        // 启动监控
+        function startMonitor() {
+            const roomIdInput = document.getElementById('roomId');
+            const sessionIdInput = document.getElementById('sessionId');
+            const antiDetectionInput = document.getElementById('antiDetection');
+            const roomId = roomIdInput.value.trim();
+            const sessionId = sessionIdInput.value.trim();
+            const antiDetection = antiDetectionInput.checked;
+            
+            if (!roomId) {
+                alert('请输入TikTok主播ID');
+                return;
+            }
+            
+            // 禁用按钮，防止重复点击
+            const startBtn = document.getElementById('startMonitorBtn');
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 启动中...';
+            
+            console.log(`正在发送请求启动监控: ${roomId}，伪装模式: ${antiDetection}`);
+            
+            // 发送请求启动监控
+            const requestData = { unique_id: roomId };
+            if (sessionId) {
+                requestData.sessionid = sessionId;
+            }
+            if (antiDetection) {
+                requestData.anti_detection = true;
+            }
+            
+            fetch('/start_monitor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                console.log(`收到服务器响应，状态码: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`服务器返回错误状态码: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(`解析响应数据:`, data);
+                if (data.status === 'success') {
+                    console.log(`监控启动成功: ${data.unique_id || roomId}`);
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('startMonitorModal'));
+                    modal.hide();
+                    
+                    // 重置表单
+                    roomIdInput.value = '';
+                    sessionIdInput.value = '';
+                    antiDetectionInput.checked = false;
+                    
+                    // 5秒后获取数据
+                    setTimeout(() => {
+                        console.log(`开始获取直播数据: ${data.unique_id || roomId}`);
+                        fetchStreamData(data.unique_id || roomId);
+                    }, 5000);
+                } else {
+                    console.error(`启动失败: ${data.message || data.error || '未知错误'}`);
+                    alert(`启动失败: ${data.message || data.error || '未知错误'}`);
+                }
+            })
+            .catch(error => {
+                console.error('启动监控时发生错误:', error);
+                alert(`启动监控时出错: ${error.message || '请查看控制台获取详细信息'}`);
+            })
+            .finally(() => {
+                // 恢复按钮状态
+                startBtn.disabled = false;
+                startBtn.innerHTML = '开始监控';
+                console.log('重置添加监控按钮状态');
+            });
+        }
+
+        // 停止监控
+        function stopMonitor(uid) {
+            if (!confirm(`确定要停止对 ${uid} 的监控吗？`)) {
+                return;
+            }
+            
+            fetch('/stop_monitor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ unique_id: uid })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' || data.status === 'info') {
+                    // 移除流卡片
+                    const card = document.getElementById(`stream-card-${uid}`);
+                    if (card) {
+                        card.remove();
+                    }
+                    
+                    // 删除数据
+                    delete activeStreams[uid];
+                    
+                    // 如果是当前显示的流，清空内容区域
+                    if (uid === currentUid) {
+                        currentUid = null;
+                        document.getElementById('content-area').innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <h3>请添加监控或选择一个已有的直播</h3>
+                                <p>使用上方的"添加监控"按钮开始新的监控</p>
+                            </div>
+                        `;
+                        
+                        // 如果还有其他流，显示第一个
+                        const remainingUids = Object.keys(activeStreams);
+                        if (remainingUids.length > 0) {
+                            displayStreamData(remainingUids[0]);
+                        }
+                    }
+                    
+                    // 销毁图表
+                    if (charts[uid]) {
+                        charts[uid].destroy();
+                        delete charts[uid];
+                    }
+                } else {
+                    alert(`停止失败: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('停止监控时出错:', error);
+                alert('停止监控时出错，请查看控制台获取详细信息');
+            });
+        }
+
+        // 停止所有监控
+        function stopAllMonitors() {
+            if (!confirm('确定要停止所有监控吗？')) {
+                return;
+            }
+            
+            fetch('/stop_all_monitors', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // 清空流卡片容器
+                    document.getElementById('active-streams-container').innerHTML = '';
+                    
+                    // 清空内容区域
+                    document.getElementById('content-area').innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <h3>请添加监控或选择一个已有的直播</h3>
+                            <p>使用上方的"添加监控"按钮开始新的监控</p>
+                        </div>
+                    `;
+                    
+                    // 重置数据
+                    activeStreams = {};
+                    currentUid = null;
+                    
+                    // 销毁所有图表
+                    Object.keys(charts).forEach(uid => {
+                        if (charts[uid]) {
+                            charts[uid].destroy();
+                        }
+                    });
+                    charts = {};
+                    
+                    alert(data.message);
+                } else {
+                    alert(`操作失败: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('停止所有监控时出错:', error);
+                alert('停止所有监控时出错，请查看控制台获取详细信息');
+            });
+        }
+
+        // 更新所有数据
+        function updateAllData() {
+            Object.keys(activeStreams).forEach(uid => {
+                fetchStreamData(uid);
+            });
+            
+            // 更新图表数据
+            fetch('/update_chart_data')
+                .then(response => response.json())
+                .catch(error => console.error('更新图表数据时出错:', error));
+            
+            // 更新大盘数据
+            updateDashboard();
+        }
+
+        // 初始化大盘图表
+        function initDashboardCharts() {
+            // 初始化趋势图表
+            const dashboardCtx = document.getElementById('dashboard-chart').getContext('2d');
+            dashboardChart = new Chart(dashboardCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '当前观众数',
+                        data: [],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 初始化权重分析饼图
+            const weightCtx = document.getElementById('weight-chart').getContext('2d');
+            weightChart = new Chart(weightCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40',
+                            '#FF6384',
+                            '#C9CBCF'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新大盘数据
+        function updateDashboard() {
+            const streamCount = Object.keys(activeStreams).length;
+            let totalViewers = 0; // 累计观众总和
+            let currentViewers = 0; // 当前观众总和
+            let streamWeights = {};
+            
+            // 计算累计观众数总和和当前观众数，以及权重
+            Object.entries(activeStreams).forEach(([uid, data]) => {
+                const total = data.total_viewers || 0; // 累计观众数
+                const current = data.current_viewers || 0; // 当前观众数
+                totalViewers += total; // 累计观众数的总和
+                currentViewers += current; // 当前观众数的总和
+                streamWeights[uid] = total; // 权重基于累计观众数
+            });
+            
+            // 更新峰值（基于当前观众数）
+            if (currentViewers > dashboardStats.peakViewers) {
+                dashboardStats.peakViewers = currentViewers;
+            }
+            
+            // 计算平均值（基于当前观众数）
+            const avgViewers = streamCount > 0 ? Math.round(currentViewers / streamCount) : 0;
+            
+            // 更新统计卡片
+            document.getElementById('total-streams').textContent = streamCount;
+            document.getElementById('total-viewers').textContent = totalViewers.toLocaleString();
+            document.getElementById('avg-viewers').textContent = avgViewers.toLocaleString();
+            document.getElementById('peak-viewers').textContent = dashboardStats.peakViewers.toLocaleString();
+            
+            // 更新时间段分析
+            updateTimeSlotAnalysis();
+            
+            // 更新热门排行
+            updateTopStreamsList(streamWeights);
+            
+            // 更新趋势图表（使用当前观众数）
+            updateDashboardChart(currentViewers);
+            
+            // 更新权重分析图表
+            updateWeightChart(streamWeights);
+            
+            // 更新详细数据表格
+            updateStreamsTable(streamWeights, totalViewers);
+        }
+
+        // 更新时间段分析
+        function updateTimeSlotAnalysis() {
+            const currentHour = new Date().getHours();
+            const currentViewers = Object.values(activeStreams).reduce((sum, data) => sum + (data.current_viewers || 0), 0);
+            
+            // 根据当前时间段累计当前观众数
+            if (currentHour >= 0 && currentHour < 6) {
+                dashboardStats.timeSlots['0-6'] += currentViewers;
+                document.getElementById('time-0-6').textContent = dashboardStats.timeSlots['0-6'].toLocaleString();
+            } else if (currentHour >= 6 && currentHour < 12) {
+                dashboardStats.timeSlots['6-12'] += currentViewers;
+                document.getElementById('time-6-12').textContent = dashboardStats.timeSlots['6-12'].toLocaleString();
+            } else if (currentHour >= 12 && currentHour < 18) {
+                dashboardStats.timeSlots['12-18'] += currentViewers;
+                document.getElementById('time-12-18').textContent = dashboardStats.timeSlots['12-18'].toLocaleString();
+            } else {
+                dashboardStats.timeSlots['18-24'] += currentViewers;
+                document.getElementById('time-18-24').textContent = dashboardStats.timeSlots['18-24'].toLocaleString();
+            }
+        }
+
+        // 更新热门直播间排行（按当前在线人数排序）
+        function updateTopStreamsList(streamWeights) {
+            // 按当前在线人数排序而不是累计观众数
+            const sortedStreams = Object.entries(activeStreams)
+                .map(([uid, data]) => [uid, data.current_viewers || 0])
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+            
+            const listContainer = document.getElementById('top-streams-list');
+            
+            if (sortedStreams.length === 0) {
+                listContainer.innerHTML = '<p class="text-muted text-center">暂无数据</p>';
+                return;
+            }
+            
+            listContainer.innerHTML = sortedStreams.map(([uid, currentViewers], index) => `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <span class="badge bg-${index === 0 ? 'warning' : index === 1 ? 'secondary' : 'dark'} me-2">
+                            ${index + 1}
+                        </span>
+                        <strong>@${uid}</strong>
+                    </div>
+                    <span class="text-primary">${currentViewers.toLocaleString()} 观众</span>
+                </div>
+            `).join('');
+        }
+
+        // 更新大盘趋势图表
+        function updateDashboardChart(currentViewers) {
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            }); // 只显示小时:分钟
+            
+            // 检查是否是新的分钟，避免同一分钟重复添加数据点
+            const lastLabel = dashboardChart.data.labels[dashboardChart.data.labels.length - 1];
+            if (lastLabel !== timeLabel) {
+                // 添加新数据点
+                dashboardChart.data.labels.push(timeLabel);
+                dashboardChart.data.datasets[0].data.push(currentViewers);
+                
+                // 保持最多显示60个数据点（60分钟的数据）
+                if (dashboardChart.data.labels.length > 60) {
+                    dashboardChart.data.labels.shift();
+                    dashboardChart.data.datasets[0].data.shift();
+                }
+                
+                dashboardChart.update('none'); // 使用 'none' 模式避免动画延迟
+            } else {
+                // 同一分钟内，更新最后一个数据点的值
+                if (dashboardChart.data.datasets[0].data.length > 0) {
+                    dashboardChart.data.datasets[0].data[dashboardChart.data.datasets[0].data.length - 1] = currentViewers;
+                    dashboardChart.update('none');
+                }
+            }
+        }
+
+        // 更新权重分析图表
+        function updateWeightChart(streamWeights) {
+            const labels = Object.keys(streamWeights).map(uid => `@${uid}`);
+            const data = Object.values(streamWeights);
+            
+            weightChart.data.labels = labels;
+            weightChart.data.datasets[0].data = data;
+            weightChart.update('none');
+        }
+
+        // 更新详细数据表格
+        function updateStreamsTable(streamWeights, totalViewers) {
+            const tableBody = document.getElementById('streams-table-body');
+            
+            if (Object.keys(activeStreams).length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">暂无数据</td></tr>';
+                return;
+            }
+            
+            const sortedStreams = Object.entries(activeStreams)
+                .sort(([,a], [,b]) => (b.total_viewers || 0) - (a.total_viewers || 0));
+            
+            tableBody.innerHTML = sortedStreams.map(([uid, data], index) => {
+                const weightPercent = totalViewers > 0 ? ((streamWeights[uid] || 0) / totalViewers * 100).toFixed(1) : '0.0';
+                const startTime = data.start_time ? moment(data.start_time).format('MM-DD HH:mm') : '-';
+                const duration = data.start_time && data.is_live ? 
+                    moment.duration(moment().diff(moment(data.start_time))).humanize() : '-';
+                
+                return `
+                    <tr class="${data.is_live ? 'table-success' : ''}">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-${index === 0 ? 'warning' : index === 1 ? 'secondary' : 'dark'} me-2">
+                                    ${index + 1}
+                                </span>
+                                <strong>@${uid}</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge ${data.is_live ? 'bg-success' : 'bg-secondary'}">
+                                ${data.is_live ? '在线' : '离线'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="text-primary fw-bold">${(data.current_viewers || 0).toLocaleString()}</span>
+                        </td>
+                        <td>
+                            <span class="text-info fw-bold">${(data.total_viewers || 0).toLocaleString()}</span>
+                        </td>
+                        <td>${(data.total_likes || 0).toLocaleString()}</td>
+                        <td>${(data.total_comments || 0).toLocaleString()}</td>
+                        <td>${(data.total_gifts || 0).toLocaleString()}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="progress me-2" style="width: 50px; height: 8px;">
+                                    <div class="progress-bar bg-info" style="width: ${weightPercent}%"></div>
+                                </div>
+                                <small>${weightPercent}%</small>
+                            </div>
+                        </td>
+                        <td>
+                            <small>${startTime}</small>
+                            ${duration !== '-' ? `<br><small class="text-muted">${duration}</small>` : ''}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="displayStreamData('${uid}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="stopMonitor('${uid}')">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 刷新表格
+        function refreshTable() {
+            updateAllData();
+        }
+
+        // 清除历史数据
+        document.getElementById('clear-history-link').addEventListener('click', async function() {
+            // 加载用户列表
+            try {
+                const response = await fetch('/api/history/users');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const clearUserSelect = document.getElementById('clearUserSelect');
+                    clearUserSelect.innerHTML = '<option value="">所有用户</option>';
+                    data.users.forEach(user => {
+                        const option = new Option(`@${user}`, user);
+                        clearUserSelect.add(option);
+                    });
+                }
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+            }
+            
+            new bootstrap.Modal(document.getElementById('clearHistoryModal')).show();
+        });
+
+        // 确认清除历史数据
+        document.getElementById('confirmClearHistory').addEventListener('click', async function() {
+            const unique_id = document.getElementById('clearUserSelect').value;
+            const confirmText = document.getElementById('confirmText').value;
+            
+            if (confirmText !== 'CONFIRM_DELETE') {
+                alert('请正确输入确认文本: CONFIRM_DELETE');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/history/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        unique_id: unique_id || null,
+                        confirm_token: 'CONFIRM_DELETE'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert(`${result.message}\n删除了 ${result.deleted_files} 个文件`);
+                    bootstrap.Modal.getInstance(document.getElementById('clearHistoryModal')).hide();
+                    document.getElementById('confirmText').value = '';
+                } else {
+                    alert('删除失败: ' + result.message);
+                }
+            } catch (error) {
+                alert('删除时发生错误: ' + error.message);
+            }
+        });
+
+        // 数据使用统计
+        document.getElementById('data-stats-link').addEventListener('click', async function() {
+            const modal = new bootstrap.Modal(document.getElementById('dataStatsModal'));
+            modal.show();
+            
+            try {
+                const response = await fetch('/api/history/stats');
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    const stats = result.stats;
+                    const statsHtml = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <h3>${stats.daily_files}</h3>
+                                        <p>每日数据文件</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h3>${stats.session_files}</h3>
+                                        <p>会话数据文件</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <h3>${stats.export_files}</h3>
+                                        <p>导出文件</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        <h3>${stats.total_size_mb} MB</h3>
+                                        <p>总存储大小</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">用户统计</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>监控用户数:</strong> ${stats.users.length}</p>
+                                        <p><strong>用户列表:</strong> ${stats.users.map(u => '@' + u).join(', ')}</p>
+                                        <p><strong>数据时间范围:</strong> ${stats.date_range.earliest || '无'} 至 ${stats.date_range.latest || '无'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('statsContent').innerHTML = statsHtml;
+                } else {
+                    document.getElementById('statsContent').innerHTML = '<div class="alert alert-danger">获取统计数据失败</div>';
+                }
+            } catch (error) {
+                document.getElementById('statsContent').innerHTML = '<div class="alert alert-danger">获取统计数据时发生错误</div>';
+            }
+        });
+
+        // 清除详细信息视图
+        function clearDetailView() {
+            // 重置当前选中的UID
+            currentUid = null;
+            
+            // 移除所有流卡片的高亮状态
+            document.querySelectorAll('.stream-card').forEach(card => {
+                card.classList.remove('active-stream-card');
+            });
+            
+            // 清空内容区域并显示默认内容
+            document.getElementById('content-area').innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <h3>请添加监控或选择一个已有的直播</h3>
+                    <p>使用上方的"添加监控"按钮开始新的监控</p>
+                </div>
+            `;
+            
+            // 销毁当前图表（如果存在）
+            Object.keys(charts).forEach(uid => {
+                if (charts[uid]) {
+                    charts[uid].destroy();
+                    delete charts[uid];
+                }
+            });
+            
+            console.log('已清除详细信息视图，释放计算资源');
+        }
+    </script>
+
+    <!-- 清除历史数据模态框 -->
+    <div class="modal fade" id="clearHistoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">清除历史数据</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>警告：</strong>此操作将永久删除历史数据，无法恢复！
+                    </div>
+                    <div class="mb-3">
+                        <label for="clearUserSelect" class="form-label">选择要清除的用户（留空清除所有）</label>
+                        <select id="clearUserSelect" class="form-select">
+                            <option value="">所有用户</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmText" class="form-label">请输入 "CONFIRM_DELETE" 确认删除</label>
+                        <input type="text" id="confirmText" class="form-control" placeholder="CONFIRM_DELETE">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmClearHistory">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据统计模态框 -->
+    <div class="modal fade" id="dataStatsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">数据使用统计</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="statsContent">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+{
+  "monitors": [
+    {
+      "unique_id": "user9836661800791",
+      "sessionid": null,
+      "anti_detection": false,
+      "added_at": "2025-12-23T22:54:11.188220",
+      "updated_at": "2025-12-23T22:54:11.188220"
+    },
+    {
+      "unique_id": "momoskye_",
+      "sessionid": null,
+      "anti_detection": false,
+      "added_at": "2025-12-23T22:57:59.058962",
+      "updated_at": "2025-12-23T22:57:59.058962"
+    },
+    {
+      "unique_id": "kikisquishyjp2",
+      "sessionid": null,
+      "anti_detection": false,
+      "added_at": "2025-12-23T22:59:04.678527",
+      "updated_at": "2025-12-23T22:59:04.678527"
+    },
+    {
+      "unique_id": "diyladodo",
+      "sessionid": null,
+      "anti_detection": false,
+      "added_at": "2025-12-23T23:00:18.392950",
+      "updated_at": "2025-12-23T23:00:18.392950"
+    },
+    {
+      "unique_id": "dokidokidiy01",
+      "sessionid": null,
+      "anti_detection": false,
+      "added_at": "2025-12-23T23:03:39.294147",
+      "updated_at": "2025-12-23T23:03:39.294147"
+    }
+  ],
+  "saved_at": "2025-12-23T23:03:39.294147",
+  "version": "1.0"
+}

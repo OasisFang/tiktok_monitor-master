@@ -1,0 +1,48 @@
+{
+  "session_id": "session_20250609_235024",
+  "unique_id": "fancynana14",
+  "start_time": "2025-06-09T23:50:18.952335",
+  "end_time": "2025-06-09T23:50:24.698400",
+  "duration_seconds": 5.743432,
+  "room_id": 7513912127319427847,
+  "title": "ラブブの可愛いやつまた増えた❣️",
+  "stream_status": 2,
+  "summary": {
+    "peak_viewers": 0,
+    "total_viewers": 711,
+    "total_likes": 24,
+    "total_comments": 6,
+    "total_gifts": 0,
+    "total_gift_value": 0,
+    "total_follows": 0,
+    "total_shares": 0,
+    "total_subscribes": 0,
+    "unique_gift_types": 0
+  },
+  "minute_data": [
+    {
+      "t": "23:50",
+      "v": 28,
+      "l": 0,
+      "c": 0,
+      "g": 0,
+      "f": 0,
+      "s": 0
+    }
+  ],
+  "chart_data": {
+    "timestamps": [],
+    "viewer_counts": [],
+    "like_counts": [],
+    "comment_counts": []
+  },
+  "settings": {
+    "anti_detection_used": true,
+    "custom_interval": null
+  },
+  "metadata": {
+    "created_at": "2025-06-09T23:50:24.698400",
+    "file_version": "2.0",
+    "data_optimized": true
+  }
+}

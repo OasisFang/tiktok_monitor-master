@@ -1,0 +1,93 @@
+{
+  "session_id": "session_20250609_233456",
+  "unique_id": "momoka6969",
+  "start_time": "2025-06-09T00:59:10.320684",
+  "end_time": "2025-06-09T23:34:56.467402",
+  "duration_seconds": 336.240862,
+  "room_id": "7513500911982529288",
+  "title": "新作ビーズ　アクリルパーツ更新　金属チェーン　バラ新作",
+  "stream_status": 2,
+  "summary": {
+    "peak_viewers": 44,
+    "total_viewers": 2549,
+    "total_likes": 106,
+    "total_comments": 62,
+    "total_gifts": 0,
+    "total_gift_value": 0,
+    "total_follows": 0,
+    "total_shares": 0,
+    "total_subscribes": 0,
+    "unique_gift_types": 0
+  },
+  "minute_data": [
+    {
+      "t": "00:59",
+      "v": 47,
+      "l": 0,
+      "c": 0,
+      "g": 0,
+      "f": 0,
+      "s": 0
+    },
+    {
+      "t": "01:00",
+      "v": 49,
+      "l": 0,
+      "c": 3,
+      "g": 0,
+      "f": 0,
+      "s": 0
+    },
+    {
+      "t": "01:01",
+      "v": 47,
+      "l": 102,
+      "c": 9,
+      "g": 0,
+      "f": 0,
+      "s": 0
+    },
+    {
+      "t": "01:02",
+      "v": 45,
+      "l": 102,
+      "c": 15,
+      "g": 0,
+      "f": 0,
+      "s": 0
+    },
+    {
+      "t": "01:03",
+      "v": 47,
+      "l": 102,
+      "c": 19,
+      "g": 0,
+      "f": 0,
+      "s": 0
+    },
+    {
+      "t": "01:04",
+      "v": 44,
+      "l": 102,
+      "c": 36,
+      "g": 0,
+      "f": 0,
+      "s": 0
+    }
+  ],
+  "chart_data": {
+    "timestamps": [],
+    "viewer_counts": [],
+    "like_counts": [],
+    "comment_counts": []
+  },
+  "settings": {
+    "anti_detection_used": true,
+    "custom_interval": null
+  },
+  "metadata": {
+    "created_at": "2025-06-09T23:34:56.467402",
+    "file_version": "2.0",
+    "data_optimized": true
+  }
+}

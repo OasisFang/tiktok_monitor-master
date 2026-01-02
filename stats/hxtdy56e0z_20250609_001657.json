@@ -1,0 +1,73 @@
+{
+  "unique_id": "hxtdy56e0z",
+  "room_id": "7513543760618916615",
+  "title": "DIY、ハンドメイド素材のシェアルーム",
+  "stream_status": 2,
+  "create_time": 1749383237,
+  "start_time": "2025-06-09T00:16:56.117461",
+  "end_time": "2025-06-09T00:16:57.739764",
+  "duration": 1.622303,
+  "peak_viewers": 109,
+  "total_viewers": 2624,
+  "like_count": 0,
+  "comment_count": 0,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T00:16:52.187062",
+      "minute": "00:16",
+      "current_viewers": 110,
+      "total_viewers": 2622,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "ミセス好き過ぎる",
+      "comment": "可愛すぎる😭💕",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "もえめい",
+      "comment": "19見たいです",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "Rubirin  さちりん",
+      "comment": "512見たいです🤓",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "さのいち@サブ",
+      "comment": "さっきのスクショあります！こちらもスクショ取れました✨有難う御座います✨",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "とうか",
+      "comment": "ありがとうございます😊",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "もえめい",
+      "comment": "ありがとうございます！！",
+      "timestamp": "2025-06-09T00:16:56.127524"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": false,
+  "data_optimized": true
+}

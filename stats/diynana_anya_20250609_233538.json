@@ -1,0 +1,73 @@
+{
+  "unique_id": "diynana_anya",
+  "room_id": "7513894259494292225",
+  "title": "Anya diy 天然石大サービス‼️",
+  "stream_status": 2,
+  "create_time": 1749464851,
+  "start_time": "2025-06-09T23:35:33.769646",
+  "end_time": "2025-06-09T23:35:38.743671",
+  "duration": 4.974025,
+  "peak_viewers": 57,
+  "total_viewers": 2484,
+  "like_count": 33,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T23:35:28.102208",
+      "minute": "23:35",
+      "current_viewers": 57,
+      "total_viewers": 2484,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "ただの主婦",
+      "comment": "ありがとう😊",
+      "timestamp": "2025-06-09T23:35:33.775694"
+    },
+    {
+      "user": "ただの主婦",
+      "comment": "ぎっしり！",
+      "timestamp": "2025-06-09T23:35:33.775694"
+    },
+    {
+      "user": "ただの主婦",
+      "comment": "おねがい！",
+      "timestamp": "2025-06-09T23:35:33.791419"
+    },
+    {
+      "user": "ただの主婦",
+      "comment": "ありがとうございます(*^^*)",
+      "timestamp": "2025-06-09T23:35:33.791419"
+    },
+    {
+      "user": "タン",
+      "comment": "明日配信して明後日お休みだよね？？",
+      "timestamp": "2025-06-09T23:35:33.808488"
+    },
+    {
+      "user": "タン",
+      "comment": "あれ？？(笑)",
+      "timestamp": "2025-06-09T23:35:33.808488"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

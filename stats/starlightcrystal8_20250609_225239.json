@@ -1,0 +1,78 @@
+{
+  "unique_id": "starlightcrystal8",
+  "room_id": 7513929888902974215,
+  "title": "クリスタル",
+  "stream_status": 2,
+  "create_time": 1749473139,
+  "start_time": "2025-06-09T22:52:33.979449",
+  "end_time": "2025-06-09T22:52:39.677658",
+  "duration": 5.698209,
+  "peak_viewers": 40,
+  "total_viewers": 150,
+  "like_count": 0,
+  "comment_count": 7,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T22:52:27.174145",
+      "minute": "22:52",
+      "current_viewers": 37,
+      "total_viewers": 146,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "たー坊",
+      "comment": "スク オケです👌ありがとう😊",
+      "timestamp": "2025-06-09T22:52:33.982615"
+    },
+    {
+      "user": "ニコ",
+      "comment": "360+3",
+      "timestamp": "2025-06-09T22:52:33.982615"
+    },
+    {
+      "user": "あおいとり🐈🐰🍒",
+      "comment": "OK🙆‍♀️有難う御座います",
+      "timestamp": "2025-06-09T22:52:33.982615"
+    },
+    {
+      "user": "アハハヽ(´∇`)ノ🍀",
+      "comment": "こんばんは＼(^▽^)／！",
+      "timestamp": "2025-06-09T22:52:33.982615"
+    },
+    {
+      "user": "KOTETSU(こてつ)",
+      "comment": "📸スクショしました🙆‍♀️⭕ ありがとうございます🦀",
+      "timestamp": "2025-06-09T22:52:33.982615"
+    },
+    {
+      "user": "micchi3510",
+      "comment": "スクショ🙆🏻‍♀️🙆🏻‍♀️🙆🏻‍♀️",
+      "timestamp": "2025-06-09T22:52:33.982615"
+    },
+    {
+      "user": "1232341426",
+      "comment": "ありがとうございます🥰",
+      "timestamp": "2025-06-09T22:52:38.908349"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

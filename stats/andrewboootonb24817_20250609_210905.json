@@ -1,0 +1,29 @@
+{
+  "unique_id": "andrewboootonb24817",
+  "room_id": null,
+  "title": "",
+  "stream_status": 0,
+  "create_time": 0,
+  "start_time": null,
+  "end_time": "2025-06-09T21:09:05.271148",
+  "duration": 0,
+  "peak_viewers": 0,
+  "total_viewers": 0,
+  "like_count": 0,
+  "comment_count": 0,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [],
+  "recent_comments": [],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

@@ -1,0 +1,73 @@
+{
+  "unique_id": "hxtdy56e0z",
+  "room_id": 7513913405294840584,
+  "title": "DIY、ハンドメイド素材のシェアルーム",
+  "stream_status": 2,
+  "create_time": 1749469304,
+  "start_time": "2025-06-09T22:38:40.005583",
+  "end_time": "2025-06-09T22:38:45.698596",
+  "duration": 5.693013,
+  "peak_viewers": 118,
+  "total_viewers": 1473,
+  "like_count": 135,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T22:38:31.422923",
+      "minute": "22:38",
+      "current_viewers": 115,
+      "total_viewers": 1469,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "Kanako_TikTok.com",
+      "comment": "あ、良かった、rinaさんε-(´∀｀;)ﾎｯ",
+      "timestamp": "2025-06-09T22:38:40.005583"
+    },
+    {
+      "user": "SaitoTDR",
+      "comment": "送料？",
+      "timestamp": "2025-06-09T22:38:40.005583"
+    },
+    {
+      "user": "Ramu🧸🐾",
+      "comment": "12見せて下さい🦀",
+      "timestamp": "2025-06-09T22:38:40.005583"
+    },
+    {
+      "user": "たか(︎︎ ♀)",
+      "comment": "分かりました！ありがとうございます😊",
+      "timestamp": "2025-06-09T22:38:40.005583"
+    },
+    {
+      "user": "ちんたん໒꒱💙",
+      "comment": "こんばんはぁ♡♡",
+      "timestamp": "2025-06-09T22:38:40.005583"
+    },
+    {
+      "user": "りゆ",
+      "comment": "@SaitoTDR 20ドル以上で無料です。20未満は4ドルです😊",
+      "timestamp": "2025-06-09T22:38:40.005583"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

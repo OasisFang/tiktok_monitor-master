@@ -1,0 +1,105 @@
+{
+  "unique_id": "diyjojo_sonieru",
+  "room_id": "7513488458600106760",
+  "title": "今日も天然石、クリスタル、DIYいっぱいありますよ〜🔮🎀",
+  "stream_status": 2,
+  "create_time": 1749370364,
+  "start_time": "2025-06-08T22:27:00.117574",
+  "end_time": "2025-06-08T22:27:06.054119",
+  "duration": 5.936545,
+  "peak_viewers": 405,
+  "total_viewers": 15412,
+  "like_count": 30,
+  "comment_count": 0,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-08T22:26:39.833756",
+      "minute": "22:26",
+      "current_viewers": 416,
+      "total_viewers": 15393,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    },
+    {
+      "timestamp": "2025-06-08T22:27:00.130904",
+      "minute": "22:27",
+      "current_viewers": 410,
+      "total_viewers": 15402,
+      "like_count": 41,
+      "comment_count": 6,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "野良の真珠",
+      "comment": "おてんば娘そにえる🥹",
+      "timestamp": "2025-06-08T22:26:47.788508"
+    },
+    {
+      "user": "ria",
+      "comment": "でもこけて大ケガしなくて良かった🥺",
+      "timestamp": "2025-06-08T22:26:47.788508"
+    },
+    {
+      "user": "牡丹",
+      "comment": "加工して何か身に付けるのに使えたら良いのにね🥺",
+      "timestamp": "2025-06-08T22:26:47.788508"
+    },
+    {
+      "user": "牡丹",
+      "comment": "ソニエルちゃんを守ってくれたんだね🥺",
+      "timestamp": "2025-06-08T22:27:00.117574"
+    },
+    {
+      "user": "める0217",
+      "comment": "龍神シリーズですが、どちらがファントムアメジストですか？小さい方ですか？",
+      "timestamp": "2025-06-08T22:27:00.117574"
+    },
+    {
+      "user": "そう💜🐰🐾💙",
+      "comment": "こんばんは！",
+      "timestamp": "2025-06-08T22:27:00.117574"
+    },
+    {
+      "user": "野良の真珠",
+      "comment": "おてんば娘そにえる🥹",
+      "timestamp": "2025-06-08T22:27:00.117574"
+    },
+    {
+      "user": "ria",
+      "comment": "でもこけて大ケガしなくて良かった🥺",
+      "timestamp": "2025-06-08T22:27:00.117574"
+    },
+    {
+      "user": "牡丹",
+      "comment": "加工して何か身に付けるのに使えたら良いのにね🥺",
+      "timestamp": "2025-06-08T22:27:00.117574"
+    },
+    {
+      "user": "そう💜🐰🐾💙",
+      "comment": "ドラゴンボールが出てる😳",
+      "timestamp": "2025-06-08T22:27:01.919136"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

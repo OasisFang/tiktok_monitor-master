@@ -1,0 +1,85 @@
+{
+  "unique_id": "diyjojo_shigetsu",
+  "room_id": "7513915294658988808",
+  "title": "あなたをメンションしています",
+  "stream_status": 2,
+  "create_time": 1749469743,
+  "start_time": "2025-06-09T22:26:55.102929",
+  "end_time": "2025-06-09T22:26:59.866766",
+  "duration": 4.763837,
+  "peak_viewers": 943,
+  "total_viewers": 5844,
+  "like_count": 49,
+  "comment_count": 7,
+  "gift_count": 1,
+  "gift_value": 1,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T22:26:47.942106",
+      "minute": "22:26",
+      "current_viewers": 941,
+      "total_viewers": 5819,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "みちぽん",
+      "comment": "また欲しくなるぅぅ",
+      "timestamp": "2025-06-09T22:26:55.104184"
+    },
+    {
+      "user": "ゆきんこ",
+      "comment": "可愛い❤️",
+      "timestamp": "2025-06-09T22:26:55.104184"
+    },
+    {
+      "user": "kawauso",
+      "comment": "こんばんは✨",
+      "timestamp": "2025-06-09T22:26:55.104184"
+    },
+    {
+      "user": "やっさん",
+      "comment": "こんばんは",
+      "timestamp": "2025-06-09T22:26:55.104184"
+    },
+    {
+      "user": "🌸 HAN ハナちゃん🌸",
+      "comment": "キラキラ🤩これ",
+      "timestamp": "2025-06-09T22:26:55.105199"
+    },
+    {
+      "user": "牡丹",
+      "comment": "可愛いいね😍",
+      "timestamp": "2025-06-09T22:26:55.105199"
+    },
+    {
+      "user": "Kinuuuuun95",
+      "comment": "こんばんはー",
+      "timestamp": "2025-06-09T22:26:55.752703"
+    }
+  ],
+  "recent_gifts": [
+    {
+      "user": "はるか",
+      "gift_name": "Rose",
+      "gift_count": 1,
+      "timestamp": "2025-06-09T22:26:58.187901"
+    }
+  ],
+  "gifts_summary": {
+    "total_gifts": 1,
+    "total_value": 1,
+    "unique_gift_types": 1
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

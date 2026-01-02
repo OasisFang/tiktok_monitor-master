@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIKONIKO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: rgb(240, 230, 240);
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .img {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-image: url('/goat.gif');
+            background-size: cover;
+        }
+
+        .user-name {
+            position: absolute;
+            top: -30px; /* 调整位置以适应更大的字体 */
+            left: 0;
+            font-size: 24px; /* 增大字体大小 */
+            color: black;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        let lastGift = ""; // 记录最后处理过的礼物信息
+
+        async function fetchGiftInfo() {
+            const response = await fetch('/get_gift_info');
+            const data = await response.json();
+            
+            // 如果收到新的礼物信息，且与之前处理的不同，创建新的小羊
+            if (data.user && `${data.user} 送出了 ${data.gift}` !== lastGift) {
+                createGoat(data);
+                lastGift = `${data.user} 送出了 ${data.gift}`;
+            }
+        }
+
+        function createGoat(giftData) {
+            const img = document.createElement('div');
+            img.className = 'img';
+            img.style.left = window.innerWidth + 'px'; // 从屏幕右侧开始位置
+
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `${giftData.user}`;
+
+            img.appendChild(userName);
+            document.body.appendChild(img);
+
+            let posX = window.innerWidth;
+            function moveGoat() {
+                posX -= 0.5; // 每次移动0.5px
+                img.style.left = posX + 'px';
+
+                if (posX < -img.clientWidth) {
+                    img.remove(); // 移出屏幕后删除元素
+                } else {
+                    requestAnimationFrame(moveGoat); // 继续移动
+                }
+            }
+
+            moveGoat();
+        }
+
+        setInterval(fetchGiftInfo, 1000); // 每1秒检查一次礼物信息
+    </script>
+</body>
+
+</html>

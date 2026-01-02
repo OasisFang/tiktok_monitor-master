@@ -1,0 +1,90 @@
+{
+  "unique_id": "diyjojo_shigetsu",
+  "room_id": 7513915294658988808,
+  "title": "あなたをメンションしています",
+  "stream_status": 2,
+  "create_time": 1749469743,
+  "start_time": "2025-06-09T21:53:23.786658",
+  "end_time": "2025-06-09T21:53:31.132053",
+  "duration": 7.345395,
+  "peak_viewers": 437,
+  "total_viewers": 738,
+  "like_count": 35,
+  "comment_count": 1,
+  "gift_count": 1,
+  "gift_value": 1,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T21:53:18.042401",
+      "minute": "21:53",
+      "current_viewers": 424,
+      "total_viewers": 711,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "kalee",
+      "comment": "シゲツ便届いたよ〜！！！！螺鈿ビーズ最高すぎた",
+      "timestamp": "2025-06-09T21:53:23.786658"
+    },
+    {
+      "user": "かずりん",
+      "comment": "こんばんはー✨",
+      "timestamp": "2025-06-09T21:53:23.786658"
+    },
+    {
+      "user": "amu",
+      "comment": "こんばんは〜",
+      "timestamp": "2025-06-09T21:53:23.786658"
+    },
+    {
+      "user": "あずさ(あっちん@SSC)",
+      "comment": "こんばんは＼(^▽^)／！",
+      "timestamp": "2025-06-09T21:53:23.786658"
+    },
+    {
+      "user": "たまご。",
+      "comment": "こんばんは😊",
+      "timestamp": "2025-06-09T21:53:23.786658"
+    },
+    {
+      "user": "kalee",
+      "comment": "届いた！！😂😂😂",
+      "timestamp": "2025-06-09T21:53:23.786658"
+    },
+    {
+      "user": "あひる",
+      "comment": "こんばんはー",
+      "timestamp": "2025-06-09T21:53:27.882571"
+    },
+    {
+      "user": "🍰いちケー💜",
+      "comment": "こんばんは～",
+      "timestamp": "2025-06-09T21:53:31.132053"
+    }
+  ],
+  "recent_gifts": [
+    {
+      "user": "7",
+      "gift_name": "Heart Me",
+      "gift_count": 1,
+      "timestamp": "2025-06-09T21:53:29.599330"
+    }
+  ],
+  "gifts_summary": {
+    "total_gifts": 1,
+    "total_value": 1,
+    "unique_gift_types": 1
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIKONIKO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: rgb(255, 255, 255);
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .img {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            background-image: url('/goat.gif');
+            background-size: cover;
+        }
+
+        .user-name {
+            position: absolute;
+            top: -30px; /* 调整位置以适应更大的字体 */
+            left: 0;
+            font-size: 24px; /* 增大字体大小 */
+            color: black;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+  <script>
+      let lastGift = ""; // 记录最后处理过的礼物信息
+      let giftQueue = []; // 用于存储礼物信息的队列
+      let isAnimating = false; // 标记当前是否有动画正在进行
+      let pageVisible = true; // 用于检测页面是否可见
+
+      document.addEventListener("visibilitychange", () => {
+          pageVisible = !document.hidden;
+          if (pageVisible && !isAnimating && giftQueue.length > 0) {
+              processGiftQueue();
+          }
+      });
+
+      async function fetchGiftInfo() {
+          const response = await fetch('/get_gift_info');
+          const data = await response.json();
+          
+          if (data.user && `${data.user} 送出了 ${data.gift}` !== lastGift) {
+              // 将新的礼物信息加入队列
+              giftQueue.push(data);
+              lastGift = `${data.user} 送出了 ${data.gift}`;
+              // 如果当前没有正在进行的动画，并且页面是可见的，开始处理队列中的礼物
+              if (!isAnimating && pageVisible) {
+                  processGiftQueue();
+              }
+          }
+      }
+
+      function processGiftQueue() {
+          if (giftQueue.length > 0 && !isAnimating) {
+              isAnimating = true; // 标记正在进行动画
+              const giftData = giftQueue.shift(); // 取出队列中的第一个礼物信息
+              createGoat(giftData, () => {
+                  // 当前礼物动画结束后，继续处理下一个礼物
+                  isAnimating = false;
+                  processGiftQueue();
+              });
+          }
+      }
+
+      function createGoat(giftData, callback) {
+          const img = document.createElement('div');
+          img.className = 'img';
+          img.style.left = window.innerWidth + 'px'; // 从屏幕右侧开始位置
+          img.style.top = '50%'; // 垂直居中
+
+          const userName = document.createElement('div');
+          userName.className = 'user-name';
+          userName.textContent = `${giftData.user}`;
+
+          img.appendChild(userName);
+          document.body.appendChild(img);
+
+          let posX = window.innerWidth;
+          const moveSpeed = 0.5; // 每次移动的像素数
+          let hasGeneratedNext = false; // 用来标记是否已经生成了下一个礼物
+
+          function moveGoat() {
+              posX -= moveSpeed;
+              img.style.left = posX + 'px';
+
+              // 如果小羊的右侧完全进入屏幕，生成下一个小羊，且留出5px的空隙
+              if (!hasGeneratedNext && posX <= window.innerWidth - img.clientWidth - 5) {
+                  hasGeneratedNext = true;
+                  if (callback) callback(); // 动画还没结束，但生成下一个礼物
+              }
+
+              // 移出屏幕后删除元素
+              if (posX < -img.clientWidth) {
+                  img.remove();
+              } else {
+                  requestAnimationFrame(moveGoat); // 继续移动
+              }
+          }
+
+          moveGoat();
+      }
+
+      setInterval(fetchGiftInfo, 1000); // 每1秒检查一次礼物信息
+  </script>
+</body>
+
+</html>

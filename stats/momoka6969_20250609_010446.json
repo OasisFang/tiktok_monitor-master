@@ -1,0 +1,153 @@
+{
+  "unique_id": "momoka6969",
+  "room_id": "7513500911982529288",
+  "title": "新作ビーズ　アクリルパーツ更新　金属チェーン　バラ新作",
+  "stream_status": 2,
+  "create_time": 1749373264,
+  "start_time": "2025-06-09T00:59:10.320684",
+  "end_time": "2025-06-09T01:04:46.561546",
+  "duration": 336.240862,
+  "peak_viewers": 44,
+  "total_viewers": 2549,
+  "like_count": 106,
+  "comment_count": 62,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T00:59:03.709300",
+      "minute": "00:59",
+      "current_viewers": 47,
+      "total_viewers": 2549,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    },
+    {
+      "timestamp": "2025-06-09T01:00:03.479064",
+      "minute": "01:00",
+      "current_viewers": 49,
+      "total_viewers": 2549,
+      "like_count": 0,
+      "comment_count": 3,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    },
+    {
+      "timestamp": "2025-06-09T01:01:00.890602",
+      "minute": "01:01",
+      "current_viewers": 47,
+      "total_viewers": 2549,
+      "like_count": 102,
+      "comment_count": 9,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    },
+    {
+      "timestamp": "2025-06-09T01:02:00.068367",
+      "minute": "01:02",
+      "current_viewers": 45,
+      "total_viewers": 2549,
+      "like_count": 102,
+      "comment_count": 15,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    },
+    {
+      "timestamp": "2025-06-09T01:03:00.650269",
+      "minute": "01:03",
+      "current_viewers": 47,
+      "total_viewers": 2549,
+      "like_count": 102,
+      "comment_count": 19,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    },
+    {
+      "timestamp": "2025-06-09T01:04:02.009262",
+      "minute": "01:04",
+      "current_viewers": 44,
+      "total_viewers": 2549,
+      "like_count": 102,
+      "comment_count": 36,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "user5849848703146",
+      "comment": "明日もゆっくりしてね〜また待ってるね！",
+      "timestamp": "2025-06-09T01:04:29.877499"
+    },
+    {
+      "user": "あーちゃん",
+      "comment": "無理しないでね🥰🌹",
+      "timestamp": "2025-06-09T01:04:30.710312"
+    },
+    {
+      "user": "すずめ姫",
+      "comment": "また火曜にね☺️",
+      "timestamp": "2025-06-09T01:04:33.280554"
+    },
+    {
+      "user": "ぐるみ",
+      "comment": "お疲れ様でした😊",
+      "timestamp": "2025-06-09T01:04:34.076546"
+    },
+    {
+      "user": "だぁこ",
+      "comment": "お疲れさまでした🫶また火曜日ね💃🫶",
+      "timestamp": "2025-06-09T01:04:34.076546"
+    },
+    {
+      "user": "あーちゃん",
+      "comment": "おやすみなさいませ🥰🌹",
+      "timestamp": "2025-06-09T01:04:43.152128"
+    },
+    {
+      "user": "🐶チコチコ🐶",
+      "comment": "ゆっくり休んで下さいね❤️りおさんが元気ないと寂しよ☺️",
+      "timestamp": "2025-06-09T01:04:43.152869"
+    },
+    {
+      "user": "ねこにゃん🗝SMA405",
+      "comment": "またあさってね❣️おやすみなさい🥰✨",
+      "timestamp": "2025-06-09T01:04:44.752043"
+    },
+    {
+      "user": "nezukochan2434",
+      "comment": "美味しもの食べてくれおつかれ様",
+      "timestamp": "2025-06-09T01:04:46.546088"
+    },
+    {
+      "user": "ハチママ",
+      "comment": "おやすみなさい💓‪",
+      "timestamp": "2025-06-09T01:04:46.546088"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

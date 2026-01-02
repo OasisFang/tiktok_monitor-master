@@ -1,0 +1,73 @@
+{
+  "unique_id": "diyjojo_shigetsu",
+  "room_id": "7513915294658988808",
+  "title": "あなたをメンションしています",
+  "stream_status": 2,
+  "create_time": 1749469743,
+  "start_time": "2025-06-09T23:05:28.006041",
+  "end_time": "2025-06-09T23:05:34.446118",
+  "duration": 6.440077,
+  "peak_viewers": 1088,
+  "total_viewers": 11447,
+  "like_count": 98,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T23:05:21.053109",
+      "minute": "23:05",
+      "current_viewers": 1077,
+      "total_viewers": 11437,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "ちえ🤍",
+      "comment": "ありがとう❤❤❤❤❤❤",
+      "timestamp": "2025-06-09T23:05:28.023418"
+    },
+    {
+      "user": "Maya_iLYs♥️🩵💜",
+      "comment": "その木はオマケ？(* ᐕ)？",
+      "timestamp": "2025-06-09T23:05:28.023418"
+    },
+    {
+      "user": "ちえ🤍",
+      "comment": "お揃い作るう",
+      "timestamp": "2025-06-09T23:05:28.023418"
+    },
+    {
+      "user": "くろあめさん",
+      "comment": "指がー",
+      "timestamp": "2025-06-09T23:05:28.023418"
+    },
+    {
+      "user": "画伯のなお",
+      "comment": "その水色はズルいぞ(๑˘･з･˘)",
+      "timestamp": "2025-06-09T23:05:28.023418"
+    },
+    {
+      "user": "ゆうこ",
+      "comment": "こんばんは😊",
+      "timestamp": "2025-06-09T23:05:28.023418"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

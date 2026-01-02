@@ -1,0 +1,38 @@
+{
+  "session_id": "session_20250609_233456",
+  "unique_id": "fancynana14",
+  "start_time": "2025-06-09T00:00:00",
+  "end_time": "2025-06-09T23:34:56.493007",
+  "duration_seconds": 0,
+  "room_id": null,
+  "title": "历史数据 2025-06-09",
+  "stream_status": 0,
+  "summary": {
+    "peak_viewers": 0,
+    "total_viewers": 0,
+    "total_likes": 0,
+    "total_comments": 0,
+    "total_gifts": 0,
+    "total_gift_value": 0,
+    "total_follows": 0,
+    "total_shares": 0,
+    "total_subscribes": 0,
+    "unique_gift_types": 0
+  },
+  "minute_data": [],
+  "chart_data": {
+    "timestamps": [],
+    "viewer_counts": [],
+    "like_counts": [],
+    "comment_counts": []
+  },
+  "settings": {
+    "anti_detection_used": false,
+    "custom_interval": null
+  },
+  "metadata": {
+    "created_at": "2025-06-09T23:34:56.493007",
+    "file_version": "2.0",
+    "data_optimized": true
+  }
+}

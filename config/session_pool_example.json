@@ -1,0 +1,34 @@
+{
+  "说明": "这是账号池配置示例文件，请复制为 session_pool.json 并填入真实的sessionid",
+  "sessions": [
+    {
+      "sessionid": "在此填入第1个TikTok账号的sessionid",
+      "name": "账号1"
+    },
+    {
+      "sessionid": "在此填入第2个TikTok账号的sessionid",
+      "name": "账号2"
+    },
+    {
+      "sessionid": "在此填入第3个TikTok账号的sessionid",
+      "name": "账号3"
+    }
+  ],
+  "rotation_interval": 1800,
+  "current_index": 0,
+  "获取sessionid方法": [
+    "1. 用TikTok网页版登录账号 (https://www.tiktok.com)",
+    "2. 按F12打开开发者工具",
+    "3. 切换到 Application / 应用 标签",
+    "4. 在左侧展开 Cookies -> https://www.tiktok.com",
+    "5. 找到名为 sessionid 的条目，复制其值",
+    "6. 每个账号需要单独登录获取sessionid"
+  ],
+  "注意事项": [
+    "- sessionid 会过期，建议定期更新",
+    "- 账号需满18岁才能观看成人内容",
+    "- 建议使用24个账号，每30分钟轮换一次",
+    "- 被限流的账号会自动跳过"
+  ]
+}
+

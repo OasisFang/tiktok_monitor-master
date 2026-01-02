@@ -1,0 +1,83 @@
+{
+  "unique_id": "diyjojo_sonieru",
+  "room_id": "7513859902985603847",
+  "title": "今日も天然石、クリスタル、DIYいっぱいありますよ〜🔮🎀",
+  "stream_status": 2,
+  "create_time": 1749456847,
+  "start_time": "2025-06-09T20:02:45.917154",
+  "end_time": "2025-06-09T20:02:52.434671",
+  "duration": 6.517517,
+  "peak_viewers": 696,
+  "total_viewers": 7677,
+  "like_count": 26,
+  "comment_count": 0,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T20:02:37.995964",
+      "minute": "20:02",
+      "current_viewers": 695,
+      "total_viewers": 7670,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "牡蠣ゴン",
+      "comment": "そにちゃんの顔入れたらカピソニエルになる？？",
+      "timestamp": "2025-06-09T20:02:45.935462"
+    },
+    {
+      "user": "ともAyu🫧🫧",
+      "comment": "@こすぎn こっそりコメントしてる時ほど読まれますよ🤣🤣",
+      "timestamp": "2025-06-09T20:02:45.940414"
+    },
+    {
+      "user": "こすぎn",
+      "comment": "🥸🥸😭😢",
+      "timestamp": "2025-06-09T20:02:45.945352"
+    },
+    {
+      "user": "ゆ",
+      "comment": "@たかみん @ria そろそろ終わって",
+      "timestamp": "2025-06-09T20:02:45.945352"
+    },
+    {
+      "user": "Ｊ",
+      "comment": "🤣🤣🤣",
+      "timestamp": "2025-06-09T20:02:45.945352"
+    },
+    {
+      "user": "ria",
+      "comment": "@たかみん さん、それは大変です😂😂😂",
+      "timestamp": "2025-06-09T20:02:45.960777"
+    },
+    {
+      "user": "みんと",
+      "comment": "今日のお得は買わないとって思って🥰",
+      "timestamp": "2025-06-09T20:02:47.533052"
+    },
+    {
+      "user": "クロミ",
+      "comment": "🤣",
+      "timestamp": "2025-06-09T20:02:47.537165"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

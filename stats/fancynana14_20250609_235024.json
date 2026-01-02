@@ -1,0 +1,73 @@
+{
+  "unique_id": "fancynana14",
+  "room_id": 7513912127319427847,
+  "title": "ラブブの可愛いやつまた増えた❣️",
+  "stream_status": 2,
+  "create_time": 1749469005,
+  "start_time": "2025-06-09T23:50:18.952335",
+  "end_time": "2025-06-09T23:50:24.695767",
+  "duration": 5.743432,
+  "peak_viewers": 29,
+  "total_viewers": 711,
+  "like_count": 24,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T23:50:12.371101",
+      "minute": "23:50",
+      "current_viewers": 28,
+      "total_viewers": 710,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "まぁーちゃん。",
+      "comment": "@kei_love_moomin 自分がオーダーした時は最高のおつまみになる🤣競馬やってるような感覚にもなる🤣こいこい！！って画面見ながら叫んでる🤣🤣🤣",
+      "timestamp": "2025-06-09T23:50:18.960963"
+    },
+    {
+      "user": "kei_love_moomin",
+      "comment": "@まぁーちゃん。 😂😂😂😂😂もう中毒😂😂😂😂",
+      "timestamp": "2025-06-09T23:50:18.965349"
+    },
+    {
+      "user": "まぁーちゃん。",
+      "comment": "@kei_love_moomin 忙しい1週間になりそうだ🤣",
+      "timestamp": "2025-06-09T23:50:18.969637"
+    },
+    {
+      "user": "kei_love_moomin",
+      "comment": "@まぁーちゃん。 確かに😂😂😂😂",
+      "timestamp": "2025-06-09T23:50:18.975719"
+    },
+    {
+      "user": "まぁーちゃん。",
+      "comment": "@kei_love_moomin 末期の病気です🤣ラブブ症候群😂",
+      "timestamp": "2025-06-09T23:50:18.979704"
+    },
+    {
+      "user": "まぁーちゃん。",
+      "comment": "@kei_love_moomin この1週間でお金を準備せねば🤣",
+      "timestamp": "2025-06-09T23:50:18.983691"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

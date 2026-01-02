@@ -1,0 +1,73 @@
+{
+  "unique_id": "diyjojo_shigetsu",
+  "room_id": "7513915294658988808",
+  "title": "あなたをメンションしています",
+  "stream_status": 2,
+  "create_time": 1749469743,
+  "start_time": "2025-06-09T22:09:30.944332",
+  "end_time": "2025-06-09T22:09:36.536415",
+  "duration": 5.592083,
+  "peak_viewers": 746,
+  "total_viewers": 3290,
+  "like_count": 44,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T22:09:24.810148",
+      "minute": "22:09",
+      "current_viewers": 752,
+      "total_viewers": 3256,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "🐟🍋みと🍑",
+      "comment": "こんばんは(*´꒳`*)ﾉ\"",
+      "timestamp": "2025-06-09T22:09:30.951283"
+    },
+    {
+      "user": "黒猫🫶🏻🤍",
+      "comment": "光ってるねー✨",
+      "timestamp": "2025-06-09T22:09:30.955643"
+    },
+    {
+      "user": "norimaki_____🤍🤍🤍",
+      "comment": "燃えてるよー",
+      "timestamp": "2025-06-09T22:09:30.960415"
+    },
+    {
+      "user": "深澤　蓮",
+      "comment": "燃えてる",
+      "timestamp": "2025-06-09T22:09:30.965916"
+    },
+    {
+      "user": "Dita",
+      "comment": "wow😍😍",
+      "timestamp": "2025-06-09T22:09:30.970168"
+    },
+    {
+      "user": "norimaki_____🤍🤍🤍",
+      "comment": "熱い？？",
+      "timestamp": "2025-06-09T22:09:30.975386"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

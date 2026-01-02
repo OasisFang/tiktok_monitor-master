@@ -1,0 +1,105 @@
+{
+  "unique_id": "hxtdy56e0z",
+  "room_id": "7513543760618916615",
+  "title": "DIY、ハンドメイド素材のシェアルーム",
+  "stream_status": 2,
+  "create_time": 1749383237,
+  "start_time": "2025-06-09T00:17:02.575630",
+  "end_time": "2025-06-09T00:17:06.467908",
+  "duration": 3.892278,
+  "peak_viewers": 108,
+  "total_viewers": 2626,
+  "like_count": 30,
+  "comment_count": 0,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T00:16:52.187062",
+      "minute": "00:16",
+      "current_viewers": 110,
+      "total_viewers": 2622,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    },
+    {
+      "timestamp": "2025-06-09T00:17:02.598515",
+      "minute": "00:17",
+      "current_viewers": 108,
+      "total_viewers": 2624,
+      "like_count": 0,
+      "comment_count": 6,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "Rubirin  さちりん",
+      "comment": "512見たいです🤓",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "さのいち@サブ",
+      "comment": "さっきのスクショあります！こちらもスクショ取れました✨有難う御座います✨",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "とうか",
+      "comment": "ありがとうございます😊",
+      "timestamp": "2025-06-09T00:16:56.117461"
+    },
+    {
+      "user": "もえめい",
+      "comment": "ありがとうございます！！",
+      "timestamp": "2025-06-09T00:16:56.127524"
+    },
+    {
+      "user": "もえめい",
+      "comment": "19見たいです",
+      "timestamp": "2025-06-09T00:17:02.598515"
+    },
+    {
+      "user": "Rubirin  さちりん",
+      "comment": "512見たいです🤓",
+      "timestamp": "2025-06-09T00:17:02.598515"
+    },
+    {
+      "user": "さのいち@サブ",
+      "comment": "さっきのスクショあります！こちらもスクショ取れました✨有難う御座います✨",
+      "timestamp": "2025-06-09T00:17:02.598515"
+    },
+    {
+      "user": "とうか",
+      "comment": "ありがとうございます😊",
+      "timestamp": "2025-06-09T00:17:02.598515"
+    },
+    {
+      "user": "もえめい",
+      "comment": "ありがとうございます！！",
+      "timestamp": "2025-06-09T00:17:02.598515"
+    },
+    {
+      "user": "くりりん (挨拶番長)ദ്ദി ˉ͈̀꒳ˉ͈́ )✧",
+      "comment": "可愛い〜ヽ(´▽｀)/",
+      "timestamp": "2025-06-09T00:17:02.598515"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": false,
+  "data_optimized": true
+}

@@ -1,0 +1,88 @@
+{
+  "unique_id": "starlightcrystal8",
+  "room_id": "7513929888902974215",
+  "title": "クリスタル",
+  "stream_status": 2,
+  "create_time": 1749473139,
+  "start_time": "2025-06-09T23:35:43.775751",
+  "end_time": "2025-06-09T23:35:49.454812",
+  "duration": 5.679061,
+  "peak_viewers": 83,
+  "total_viewers": 967,
+  "like_count": 0,
+  "comment_count": 9,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T23:35:36.587517",
+      "minute": "23:35",
+      "current_viewers": 85,
+      "total_viewers": 967,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "꙳★*ﾟmisaki꙳★*ﾟ",
+      "comment": "スク🙆✨ありがとう❣️",
+      "timestamp": "2025-06-09T23:35:43.791900"
+    },
+    {
+      "user": "ぷんたん🪷🫰",
+      "comment": "300",
+      "timestamp": "2025-06-09T23:35:43.791900"
+    },
+    {
+      "user": "coco_chang",
+      "comment": "おけです!ありがとうございます",
+      "timestamp": "2025-06-09T23:35:43.791900"
+    },
+    {
+      "user": "暴走のＶ子",
+      "comment": "@misaki ばんわ",
+      "timestamp": "2025-06-09T23:35:43.808085"
+    },
+    {
+      "user": "꙳★*ﾟmisaki꙳★*ﾟ",
+      "comment": "@暴走のＶ子 こんばんは〜👋✨",
+      "timestamp": "2025-06-09T23:35:43.808085"
+    },
+    {
+      "user": "リーリ🌷.*",
+      "comment": "🙆‍♀️ありがとう🦀",
+      "timestamp": "2025-06-09T23:35:43.808085"
+    },
+    {
+      "user": "暴走のＶ子",
+      "comment": "おけ！",
+      "timestamp": "2025-06-09T23:35:43.871915"
+    },
+    {
+      "user": "リーリ🌷.*",
+      "comment": "穴ない子もうない？🦀",
+      "timestamp": "2025-06-09T23:35:45.316912"
+    },
+    {
+      "user": "暴走のＶ子",
+      "comment": "しぇ",
+      "timestamp": "2025-06-09T23:35:49.454812"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

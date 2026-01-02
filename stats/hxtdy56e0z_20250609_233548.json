@@ -1,0 +1,73 @@
+{
+  "unique_id": "hxtdy56e0z",
+  "room_id": "7513913405294840584",
+  "title": "DIY、ハンドメイド素材のシェアルーム",
+  "stream_status": 2,
+  "create_time": 1749469304,
+  "start_time": "2025-06-09T23:35:42.765399",
+  "end_time": "2025-06-09T23:35:48.558200",
+  "duration": 5.792801,
+  "peak_viewers": 111,
+  "total_viewers": 2534,
+  "like_count": 45,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T23:35:34.739105",
+      "minute": "23:35",
+      "current_viewers": 112,
+      "total_viewers": 2534,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "くりりん (挨拶番長)ദ്ദി ˉ͈̀꒳ˉ͈́ )✧",
+      "comment": "ガーデンの紫在庫ないですか？",
+      "timestamp": "2025-06-09T23:35:42.776277"
+    },
+    {
+      "user": "chaco⌇みちゅまる🦖🩵",
+      "comment": "57キープお願いします🦀",
+      "timestamp": "2025-06-09T23:35:42.781518"
+    },
+    {
+      "user": "ピョル",
+      "comment": "22と今キープしてる同じの交換お願いできますか？🥺",
+      "timestamp": "2025-06-09T23:35:42.785795"
+    },
+    {
+      "user": "きょむちゃん",
+      "comment": "送料無料ライン超えてても延長出来ます？",
+      "timestamp": "2025-06-09T23:35:42.790082"
+    },
+    {
+      "user": "あずびー",
+      "comment": "ありがとうあっちゃん🥰信用してます♡",
+      "timestamp": "2025-06-09T23:35:42.797048"
+    },
+    {
+      "user": "くりりん (挨拶番長)ദ്ദി ˉ͈̀꒳ˉ͈́ )✧",
+      "comment": "あぁ〜💦ざんねん(´･ω･`)",
+      "timestamp": "2025-06-09T23:35:42.802420"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}

@@ -1,0 +1,73 @@
+{
+  "unique_id": "diynana_anya",
+  "room_id": "7513894259494292225",
+  "title": "Anya diy 天然石大サービス‼️",
+  "stream_status": 2,
+  "create_time": 1749464851,
+  "start_time": "2025-06-09T23:05:38.621062",
+  "end_time": "2025-06-09T23:05:42.765947",
+  "duration": 4.144885,
+  "peak_viewers": 63,
+  "total_viewers": 2249,
+  "like_count": 89,
+  "comment_count": 6,
+  "gift_count": 0,
+  "gift_value": 0,
+  "follow_count": 0,
+  "share_count": 0,
+  "subscribe_count": 0,
+  "minute_data": [
+    {
+      "timestamp": "2025-06-09T23:05:30.130419",
+      "minute": "23:05",
+      "current_viewers": 61,
+      "total_viewers": 2248,
+      "like_count": 0,
+      "comment_count": 0,
+      "gift_count": 0,
+      "gift_value": 0,
+      "follow_count": 0,
+      "share_count": 0
+    }
+  ],
+  "recent_comments": [
+    {
+      "user": "Chimmy🐰",
+      "comment": "こんばんは😊",
+      "timestamp": "2025-06-09T23:05:38.624280"
+    },
+    {
+      "user": "ゆに∗*ﾟ",
+      "comment": "こんばんはー🌙",
+      "timestamp": "2025-06-09T23:05:38.624280"
+    },
+    {
+      "user": "ゆみこ🩷アーニャちゃん推し🩷ヘイヘイホー🩷",
+      "comment": "ヤホヤホー🩷アーニャちゃん✨️遊びに来れた🥰🥰🥰",
+      "timestamp": "2025-06-09T23:05:38.624280"
+    },
+    {
+      "user": "ゆみこ🩷アーニャちゃん推し🩷ヘイヘイホー🩷",
+      "comment": "今日またネイル変えたよ✨️今回はフラミンゴ🦩🩵また時間があったら見てみてね😉",
+      "timestamp": "2025-06-09T23:05:38.624280"
+    },
+    {
+      "user": "ゆみこ🩷アーニャちゃん推し🩷ヘイヘイホー🩷",
+      "comment": "ピンクが入ってるよ💕",
+      "timestamp": "2025-06-09T23:05:38.624280"
+    },
+    {
+      "user": "ゆみこ🩷アーニャちゃん推し🩷ヘイヘイホー🩷",
+      "comment": "昼間焼肉屋さんで🍻飲んだよ！",
+      "timestamp": "2025-06-09T23:05:38.625114"
+    }
+  ],
+  "recent_gifts": [],
+  "gifts_summary": {
+    "total_gifts": 0,
+    "total_value": 0,
+    "unique_gift_types": 0
+  },
+  "anti_detection_used": true,
+  "data_optimized": true
+}
